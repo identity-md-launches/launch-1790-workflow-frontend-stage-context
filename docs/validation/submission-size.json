@@ -1,0 +1,15 @@
+{
+  "withinByteBudget": true,
+  "byteBudget": 8388608,
+  "basis": "Uncompressed bytes in the complete candidate Git working tree, including unchanged tracked files and this report; excludes ignored dependencies, pinned task inputs and test/scratch. This is not a claim about a publisher-generated Git bundle.",
+  "baselineCommit": "a01e3ae534fbe2789742d5512ded7a99b2c83f85",
+  "completeTreeFileCount": 163,
+  "addedFileCount": 80,
+  "completeTreeBytes": 2833861,
+  "addedBytes": 1935540,
+  "productionExportBytesIncludingManifest": 894074,
+  "allAddedPathsWithinScope": true,
+  "originalTrackedFilesUnchanged": true,
+  "gitSubmodules": 0,
+  "candidateDependencyOrCacheDirectories": 0
+}

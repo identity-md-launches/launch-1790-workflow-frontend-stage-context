@@ -1,0 +1,141 @@
+{
+  "version": 1,
+  "launchId": "39c44402-22df-46a3-9825-4cba425f2ccd",
+  "chainId": 4663,
+  "sourceCommit": "a01e3ae534fbe2789742d5512ded7a99b2c83f85",
+  "attestationHash": "8aecad59722d571483ca0861daeb0b33ea6a66805c55f61abef08e2dc2a4e85d",
+  "contracts": [
+    {
+      "name": "LaunchToken",
+      "address": "0x58b82fa656ecf47a0dca5be6bad06b92e22f7dbe",
+      "abiHash": "38880b8e56d42ce900f744a7908c7139632a49f1c3f33385c64ceaed29d37bee",
+      "abiPath": "abi/LaunchToken.json"
+    },
+    {
+      "name": "Weir",
+      "address": "0x320de26e4bc988e0c425531e564ded3d2f730d32",
+      "abiHash": "9f830efe0ba948e6b888f29f31001907762f52126d556555cc855e6ec3e8cbcd",
+      "abiPath": "abi/Weir.json"
+    }
+  ],
+  "poolKey": {
+    "fee": 12500,
+    "hooks": "0x19bec7c2e1b2aadaf67b259744751a9960d66000",
+    "currency0": "0x58b82fa656ecf47a0dca5be6bad06b92e22f7dbe",
+    "currency1": "0x5f7bb59365ce557c26dbcaa4ee9d39a4b95b7127",
+    "tickSpacing": 60
+  },
+  "network": {
+    "chainId": 4663,
+    "name": "Robinhood Chain",
+    "testnet": false,
+    "rpcUrls": [
+      "https://robinhood-rpc.publicnode.com",
+      "https://rpc.mainnet.chain.robinhood.com"
+    ],
+    "explorer": "https://robin.etherscan.io",
+    "nativeCurrency": {
+      "name": "Ether",
+      "symbol": "ETH",
+      "decimals": 18
+    },
+    "faucets": [],
+    "uniswapV4": {
+      "poolManager": "0x8366a39cc670b4001a1121b8f6a443a643e40951",
+      "universalRouter": "0x8876789976decbfcbbbe364623c63652db8c0904",
+      "quoter": "0x8dc178efb8111bb0973dd9d722ebeff267c98f94",
+      "stateView": "0xf3334192d15450cdd385c8b70e03f9a6bd9e673b",
+      "positionManager": "0x58daec3116aae6d93017baaea7749052e8a04fa7",
+      "permit2": "0x000000000022d473030f116ddee9f6b43ac78ba3",
+      "extendedSwapParams": true
+    },
+    "pairToken": {
+      "address": "0x5f7bb59365ce557c26dbcaa4ee9d39a4b95b7127",
+      "symbol": "IMD",
+      "name": "Identity.md",
+      "decimals": 18
+    }
+  },
+  "walletAddChain": {
+    "chainId": "0x1237",
+    "chainName": "Robinhood Chain",
+    "rpcUrls": [
+      "https://robinhood-rpc.publicnode.com",
+      "https://rpc.mainnet.chain.robinhood.com"
+    ],
+    "nativeCurrency": {
+      "name": "Ether",
+      "symbol": "ETH",
+      "decimals": 18
+    },
+    "blockExplorerUrls": [
+      "https://robin.etherscan.io"
+    ]
+  },
+  "assets": [
+    {
+      "path": "abi/LaunchToken.json",
+      "sha256": "47e57a3fcbad55990d5fb2b23a5b67e1dc571d9a4e5ba90035ad77d71b0227f9"
+    },
+    {
+      "path": "abi/Weir.json",
+      "sha256": "d2cc99665f33b4b47ce9c7f6c8dd8637b2c189cae2276ed0857a8f51d70a1103"
+    },
+    {
+      "path": "assets/ccip-AbUCi2yX.js",
+      "sha256": "3b6f54e2a89989ba306036cf016d006f9da659dd6ff948850a14b711c5c29f20"
+    },
+    {
+      "path": "assets/dist-fGzc40Bv.js",
+      "sha256": "c9171a3ac73ff52a650a166161e4fcaad0d3d3c28aa28b766f8d0916d0f49aa7"
+    },
+    {
+      "path": "assets/index-D9yeEq1A.js",
+      "sha256": "3cbf1a48616c24f12081ca44648cd9deb1d44bbbfe992eee8c1bb9b649471997"
+    },
+    {
+      "path": "assets/index-eIDXM5Tf.css",
+      "sha256": "dd3b4d2671ef5e84db227e9d99b1a96574bde681217700e00c0dd9c6d0da9795"
+    },
+    {
+      "path": "favicon.svg",
+      "sha256": "06d97f94742bbf6cc1896f83bc661cd1bc1ec0cf561ce10ff67fd3027503d5e9"
+    },
+    {
+      "path": "history-start.json",
+      "sha256": "7c981e66fcfc4bf0a659ac6768365ea04be50981f1e88426e3eff1e9c6215557"
+    },
+    {
+      "path": "index.html",
+      "sha256": "c139f1199834b62a27597bd60ccc573318925e722dc6c97b31b0a774d2523c83"
+    },
+    {
+      "path": "share.png",
+      "sha256": "ba1d1295780f4e671463fd891836c07354423a0fa10820e249dd34440e124911"
+    },
+    {
+      "path": "third-party-licenses.txt",
+      "sha256": "a960bdb7fddcd763548b4e623adc60ca1b6bd0f2d77248e0b56720a279b4301d"
+    },
+    {
+      "path": "wallets/browser.svg",
+      "sha256": "356c544aed8949bb759ede55541c3deddb530f5b35fbbb40df26e6adce0d233b"
+    },
+    {
+      "path": "wallets/coinbase.svg",
+      "sha256": "ab2d64bdbb8f4ffdcbfdb04167f622d4ac64bbcade1a1bc937761478f1efa62f"
+    },
+    {
+      "path": "wallets/metamask.svg",
+      "sha256": "892c7dfab8c4ca5682878dda3f42f55a75195d7d365e4adb0832845f3a0a2135"
+    },
+    {
+      "path": "wallets/phantom.svg",
+      "sha256": "f841f8112e131259a2e5123177950099c79487e61e77971f4e193e6c374419eb"
+    },
+    {
+      "path": "wallets/rabby.svg",
+      "sha256": "dcae4de88ebfa10cffa1fe28df13d7c8c0b40736ef2b704f1f2fc348e777e443"
+    }
+  ]
+}

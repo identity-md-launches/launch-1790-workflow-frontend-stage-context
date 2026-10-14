@@ -1,0 +1,39 @@
+
+> weir-web@1.0.0 build
+> node scripts/export.mjs prepare && vite build && node scripts/export.mjs finalize
+
+Pinned source ABIs verified; deployment inputs prepared.
+vite v8.3.4 building client environment for production...
+transforming...
+✓ 795 modules transformed.
+rendering chunks...
+computing gzip size...
+../dist/index.html                   1.20 kB │ gzip:   0.60 kB
+../dist/third-party-licenses.txt    35.87 kB │ gzip:   5.55 kB
+../dist/assets/index-eIDXM5Tf.css   19.54 kB │ gzip:   4.68 kB
+../dist/assets/ccip-AbUCi2yX.js      2.83 kB │ gzip:   1.31 kB
+../dist/assets/dist-fGzc40Bv.js     96.21 kB │ gzip:  31.08 kB
+../dist/assets/index-D9yeEq1A.js   649.98 kB │ gzip: 194.65 kB
+
+✓ built in 867ms
+{
+  "verified": true,
+  "sourceCommit": "a01e3ae534fbe2789742d5512ded7a99b2c83f85",
+  "assets": 16,
+  "exportBytes": 889616,
+  "abiHashes": [
+    {
+      "name": "LaunchToken",
+      "abiHash": "38880b8e56d42ce900f744a7908c7139632a49f1c3f33385c64ceaed29d37bee"
+    },
+    {
+      "name": "Weir",
+      "abiHash": "9f830efe0ba948e6b888f29f31001907762f52126d556555cc855e6ec3e8cbcd"
+    }
+  ]
+}
+npm notice
+npm notice New major version of npm available! 11.19.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice

@@ -1,0 +1,28 @@
+
+> weir-web@1.0.0 test
+> tsx --test tests/domain.test.ts
+
+✔ 6-decimal token amounts retain exact units (1.788443ms)
+✔ contract width is checked before encoding (0.272127ms)
+✔ job UUIDs use right-padded bytes32 and round-trip (0.405246ms)
+✔ untrusted terms cannot produce executable links (0.1948ms)
+✔ note limit counts UTF-8 bytes rather than characters (0.246338ms)
+✔ client and recipient controls follow deployed states (0.360889ms)
+✔ IMD stream allowance combines the bond and caller fee (0.929068ms)
+✔ ABI bindings equal the attested hashes (18.177315ms)
+✔ unknown chain offers exact add-chain parameters then retries switching (6.309408ms)
+✔ a rejected switch never triggers add-chain (0.817021ms)
+✔ custom reverts and rejected signatures receive useful copy (1.685469ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1438.561005
+npm notice
+npm notice New major version of npm available! 11.19.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice

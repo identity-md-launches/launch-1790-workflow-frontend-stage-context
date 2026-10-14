@@ -1,0 +1,81 @@
+{
+  "manifestSha256": "291e9e4f013dda30a86b53fc46be8d2828f5826673beb3cc61f3bfcabaea781e",
+  "testedAt": "2026-10-14T23:17:37.075Z",
+  "mode": "Production export, local static subpath, mocked EIP-1193 wallet and JSON-RPC; no funded transactions",
+  "passed": 18,
+  "failed": 0,
+  "results": [
+    {
+      "name": "Static subpath, metadata, mobile first screen and all page reflow",
+      "passed": true
+    },
+    {
+      "name": "EIP-6963 discovery, exact add-chain fallback and connected eligibility",
+      "passed": true
+    },
+    {
+      "name": "Wallet sheet keyboard trap, Escape and focus restoration",
+      "passed": true
+    },
+    {
+      "name": "Phone wallet picker exposes all four app links and Coinbase Smart Wallet",
+      "passed": true
+    },
+    {
+      "name": "Rejected network switch remains visible and blocks writes",
+      "passed": true
+    },
+    {
+      "name": "Create 6-decimal stream: terms hash, approval, pending and encoded amount",
+      "passed": true
+    },
+    {
+      "name": "Terms file bytes and invalid address/precision stop creation",
+      "passed": true
+    },
+    {
+      "name": "Court sponsorship stages IMD approval, shows rejection, then confirms",
+      "passed": true
+    },
+    {
+      "name": "Client: deposit, pause, restart, adjust, refund, max refund and void",
+      "passed": true
+    },
+    {
+      "name": "Recipient: accept, withdraw amount, withdraw max and claim deferred payout",
+      "passed": true
+    },
+    {
+      "name": "Dispute exact preview, staged token and IMD approvals, bounded bond",
+      "passed": true
+    },
+    {
+      "name": "IMD stream merges bond and fee into a single exact allowance",
+      "passed": true
+    },
+    {
+      "name": "Fund-paid dispute skips fee approval and rechecks a changed payer",
+      "passed": true
+    },
+    {
+      "name": "Anyone can enforce or expire strictly after timeout",
+      "passed": true
+    },
+    {
+      "name": "Custom contract error prevents signature and remains actionable",
+      "passed": true
+    },
+    {
+      "name": "StreamCreated lists both roles, live values and address records",
+      "passed": true
+    },
+    {
+      "name": "Missing code disables signing, including with a connected wallet",
+      "passed": true
+    },
+    {
+      "name": "Long connected values, mobile dialog, reduced motion and reflow",
+      "passed": true
+    }
+  ]
+}
