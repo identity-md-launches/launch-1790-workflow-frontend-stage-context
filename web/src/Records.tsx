@@ -17,10 +17,10 @@ export function RecordCard({
     [account],
   );
   const labels = [
-    "Client wins",
-    "Client losses",
-    "Recipient wins",
-    "Recipient losses",
+    "Won as a client",
+    "Lost as a client",
+    "Won as a recipient",
+    "Lost as a recipient",
     "Disputes raised",
   ];
   return (
@@ -48,9 +48,9 @@ export function Records() {
   const [error, setError] = useState("");
   return (
     <>
-      <Title>Public records</Title>
+      <Title>Track records</Title>
       <p className="page-description">
-        Look up an address’s on-chain dispute record.
+        How any wallet has fared when reviewers were asked. Public, on-chain.
       </p>
       <form
         className="lookup-form"
@@ -92,15 +92,14 @@ export function Records() {
       {error && <Notice error>{error}</Notice>}
       {target && <RecordCard account={target} />}
       <section className="reading-note">
-        <h2>What a record means</h2>
+        <h2>How to read this</h2>
         <p>
-          Rulings count against both parties only after the recipient has
-          accepted the terms. Accepting, withdrawing or raising a dispute as the
-          recipient records that acceptance.
+          A decision is recorded for both sides only once the recipient has
+          accepted the terms (accepting, withdrawing, or disputing counts).
         </p>
         <p>
-          A timeout or panel failure does not add a win or loss. A record
-          reflects a panel judgement, not a court of law.
+          If the reviewers could not decide, nothing is recorded. This is a
+          reviewers’ judgement, not a court of law.
         </p>
       </section>
     </>

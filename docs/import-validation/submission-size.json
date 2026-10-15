@@ -1,0 +1,21 @@
+{
+  "files": 237,
+  "workingTreeBytes": 8110119,
+  "completeTreeBundleBytes": 3951917,
+  "limitBytes": 8388608,
+  "belowLimit": true,
+  "includesExistingGitHistory": false,
+  "includesDependencyDirectories": false,
+  "ignoredFilesIncluded": false,
+  "sourceAndRuntimeAssetsComplete": true,
+  "measurementScope": "All candidate repository files, including unchanged contracts/tests/lib and all source/runtime assets; prior project history excluded.",
+  "measurementBeforeFinalSizeReport": true,
+  "completeBundleConservativeUpperBoundBytes": 4017453,
+  "rawTreeConservativeUpperBoundBytes": 8175655,
+  "allowanceNote": "64 KiB added conservatively for this report and final documentation edits; final actual bundle is remeasured after writing this file.",
+  "temporaryBundleGitVerify": "passed",
+  "priorHistoryLimitation": "Full-history packing encountered an unavailable historical object in the supplied partial clone; the complete current-tree snapshot is self-contained.",
+  "noSubmodules": true,
+  "ignoreFilesChanged": false,
+  "protectedBuildConfigurationChanged": false
+}

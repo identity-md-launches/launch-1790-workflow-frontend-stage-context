@@ -1,3 +1,61 @@
+# Weir. website — approved import
+
+The website source in `web/` and static export in `dist/` are copied **byte-for-byte** from [SwarmStream/swarmstream at `fc3ac859dfbcd4f5bb030c577b4dec6657e33303`](https://github.com/SwarmStream/swarmstream/tree/fc3ac859dfbcd4f5bb030c577b4dec6657e33303). This is the approved Weir. design, including the client and freelancer receipt pages. No application design, wording, artwork, wallet flow or contract call was changed during this import.
+
+**Publication target:** existing IMD label `weir`, https://weir.sites.imd.fun, under `weir.site.identitymd.eth`. The deliverable for the IMD publisher is the repository-root **`dist/`**, not `web/` or a freshly generated substitute. This worker prepared and validated those files; post-submission pinning, site-label replacement and public availability are performed by the IMD publication pipeline. No new CID or completed public deployment is claimed here.
+
+## Install, preview and rebuild
+
+Use Node 22.12+ and npm (Node 24 was used for this check). From the repository root:
+
+```sh
+cd web
+npm ci
+npm run typecheck
+npm test
+npm run preview -- --host 127.0.0.1
+```
+
+Preview serves the committed `../dist/` without rebuilding. Open the local URL printed by Vite. Primary routes are `#/`, `#/create`, `#/streams`, and `#/records`; receipts are `#/stream/<positive-id>/receipt/client` and `#/stream/<positive-id>/receipt/freelancer`. Vite's `base: './'` and local font/asset paths support static hosting under a subpath.
+
+To reproduce the export in a disposable checkout:
+
+```sh
+cd web
+npm ci
+npm run typecheck
+npm test
+npm run build
+npm run check:export
+npm run preview
+```
+
+The build writes `../dist/` and refreshes generated public staging files. For this approved-import delivery, retain the pinned export and compare every rebuilt byte before considering replacement. The build reads `docs/abi/` from the deployed source commit when available, otherwise from the working tree, and checks canonical ABI hashes against the handoff. Keep the root `docs/abi/` directory with the checkout. No key, relay account or WalletConnect project ID is needed. Do not commit installed modules, caches or dependency archives.
+
+## Actual validation for this import
+
+- Production build and TypeScript check passed. The rebuild reproduced **all 42 export files exactly**, including the deployment manifest and ABIs. Vite emitted font-resolution warnings, but the preserved relative font URLs loaded successfully in the browser.
+- All **11 domain tests** passed. The current-interface browser harness passed **12 scenarios**, including all seven routes across 360–1440 px, mobile street panning, wallet switching/rejection, simulated exact-amount approval and creation, records, receipt copying/printing, and reduced motion. No transaction was broadcast.
+- The imported historical browser suite was also run: **2 passed, 16 failed** because it still expects the earlier interface's labels/structure. It is preserved unchanged; use the current harness below for this import's interaction checks.
+- The pinned design probe passed **11/16** checks. Its remaining findings are documented under the explicit requirement to preserve the approved design. At 320 px the home header overflows; the required 360 px layout passes. Sampled axe-core checks reported no violations. WebKit could not start due to missing system libraries; native Safari, real wallet signing and physical phones remain unverified.
+- Scripts and fonts loaded from the static site's origin; no analytics/tracker load was observed. All original plate files, contract addresses, chain 4663 and the complete approved manifest/ABI bytes were preserved.
+
+To rerun the current interaction harness after `npm ci`:
+
+```sh
+cd web
+npx playwright install chromium
+cd ..
+node docs/import-validation/interaction-check.mjs
+sha256sum --check docs/import-validation/approved-files.sha256
+```
+
+The harness starts and stops its own subpath preview, uses only mock wallets/RPC for transaction tests, and writes disposable evidence under `test/scratch/import-validation/`. `WEIR_CHECK_WEB` can point to an identical temporary `web/` checkout containing dependencies; `PLAYWRIGHT_BROWSERS_PATH` can point to a temporary browser installation. WebKit is attempted when available and reported as unverified otherwise.
+
+See [DESIGN.md](DESIGN.md), [the full validation report](docs/IMPORT_VALIDATION.md), [byte-integrity evidence](docs/import-validation/integrity.json), and [submission size evidence](docs/import-validation/submission-size.json). Older documents under `docs/` and the imported `web/README.md` describe earlier stages; their validation results do not certify this export. The contract documentation below is retained as historical implementation documentation. This import adds no audit claim beyond the swarm's panel and deploys no contract.
+
+---
+
 # Weir contracts
 
 Weir streams ERC-20 tokens from a client to a recipient under a terms hash and URI. A dispute pauses the stream and asks one IdentityMD oracle question about whether the recipient delivered the agreed work. Weir charges no application fee.

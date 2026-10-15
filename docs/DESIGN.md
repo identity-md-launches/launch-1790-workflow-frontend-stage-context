@@ -1,3 +1,5 @@
+> Historical document from the previous frontend delivery. For the approved import at `fc3ac859dfbcd4f5bb030c577b4dec6657e33303`, see [current validation](IMPORT_VALIDATION.md) and [current design documentation](../DESIGN.md). The evidence below was not rerun for this export.
+
 # Weir implemented design system
 
 ## Overview

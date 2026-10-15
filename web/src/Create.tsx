@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useAccount } from "wagmi";
 import {
   decodeEventLog,
-  formatUnits,
   isAddress,
   keccak256,
   toBytes,
@@ -10,14 +9,14 @@ import {
   type Address,
   type Hex,
 } from "viem";
-import { useRead, useRuntime, useToken } from "./data";
+import { useBalance, useRead, useReady, useRuntime, useToken } from "./data";
+import { useWalletClient } from "wagmi";
 import {
   address,
   amount,
   byteLength,
   errorText,
   jobId,
-  safeUri,
   tryAmount,
   UINT128_MAX,
   units,
@@ -27,6 +26,89 @@ import { Eligibility } from "./Home";
 import { AddressView, Field, Notice, QueryState, Title } from "./ui";
 import { ConnectPrompt } from "./Wallet";
 
+/** Wrap ETH into WETH so it can be streamed; the recipient can unwrap it any time. */
+function WrapEth({ needed, decimals }: { needed: bigint; decimals: number }) {
+  const r = useRuntime();
+  const gate = useReady();
+  const { data: wallet } = useWalletClient({ chainId: r.chain.id });
+  const weth = WETH[r.chain.id];
+  const balance = useBalance(weth, gate.address);
+  const [state, setState] = useState<"idle" | "signing" | "pending" | "done" | "error">("idle");
+  const [message, setMessage] = useState("");
+  if (!weth || balance.data === undefined || balance.data >= needed) return null;
+  const missing = needed - balance.data;
+  return (
+    <div className="notice">
+      <p>
+        You hold {units(balance.data, decimals)} WETH. Wrap {units(missing, decimals)} ETH first
+        (one wallet step), then approve and create.
+      </p>
+      <button
+        type="button"
+        disabled={!gate.ready || !wallet || state === "signing" || state === "pending"}
+        onClick={async () => {
+          try {
+            setState("signing");
+            setMessage("");
+            const hash = await wallet!.writeContract({
+              address: weth,
+              abi: WETH_ABI,
+              functionName: "deposit",
+              value: missing,
+              chain: r.chain,
+              account: gate.address!,
+            });
+            setState("pending");
+            const receipt = await r.client.waitForTransactionReceipt({ hash });
+            if (receipt.status !== "success") throw new Error("The wrap reverted.");
+            setState("done");
+            await balance.refetch();
+          } catch (e) {
+            setState("error");
+            setMessage(errorText(e));
+          }
+        }}
+      >
+        {state === "signing" ? "Confirm in your wallet…" : state === "pending" ? "Wrapping…" : `Wrap ${units(missing, decimals)} ETH`}
+      </button>
+      {message && <p className="field-error">{message}</p>}
+    </div>
+  );
+}
+
+/** Named tokens offered on Robinhood Chain (4663). Symbol and decimals are still read from the contract. */
+const NAMED_TOKENS: Record<number, { label: string; address: Address; note: string }[]> = {
+  4663: [
+    {
+      label: "USDG",
+      address: "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168",
+      note: "Dollar token",
+    },
+    {
+      label: "WEIR",
+      address: "0x58b82fa656ecf47a0dca5be6bad06b92e22f7dbe",
+      note: "Weir token",
+    },
+    {
+      label: "IMD",
+      address: "0x5f7bb59365ce557c26dbcaa4ee9d39a4b95b7127",
+      note: "Identity.md token",
+    },
+    {
+      label: "ETH",
+      address: "0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73",
+      note: "Wrapped, as WETH",
+    },
+  ],
+};
+const WETH: Record<number, Address> = { 4663: "0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73" };
+const WETH_ABI = [
+  { type: "function", name: "deposit", stateMutability: "payable", inputs: [], outputs: [] },
+] as const;
+const TERMS_LIMIT = 512;
+const PERIODS = { day: 86400n, week: 604800n } as const;
+type Period = keyof typeof PERIODS;
+
 type Draft = {
   recipient: Address;
   token: Address;
@@ -35,20 +117,24 @@ type Draft = {
   hash: Hex;
   uri: string;
   job: Hex;
+  perPeriod: bigint;
+  period: Period;
 };
+
 export function Create() {
   const r = useRuntime();
   const { address: account } = useAccount();
   const eligible = useRead<boolean>("canUse", [account], !!account);
+  const named = NAMED_TOKENS[r.chain.id] ?? [];
   const [recipient, setRecipient] = useState("");
-  const [tokenInput, setTokenInput] = useState("");
-  const [rate, setRate] = useState("");
-  const [daily, setDaily] = useState("");
+  const [choice, setChoice] = useState<string>(named[0]?.address ?? "");
+  const [custom, setCustom] = useState("");
+  const [customOpen, setCustomOpen] = useState(false);
+  const [perPeriod, setPerPeriod] = useState("");
+  const [period, setPeriod] = useState<Period>("day");
   const [deposit, setDeposit] = useState("");
-  const [uri, setUri] = useState("");
-  const [hash, setHash] = useState("");
-  const [text, setText] = useState("");
-  const [fileName, setFileName] = useState("");
+  const [terms, setTerms] = useState("");
+  const [link, setLink] = useState("");
   const [job, setJob] = useState("");
   const [error, setError] = useState("");
   const [draft, setDraft] = useState<Draft>();
@@ -56,34 +142,35 @@ export function Create() {
   const [invalid, setInvalid] = useState<{ name: string; message: string }>();
   const fieldError = (name: string) =>
     invalid?.name === name ? invalid.message : undefined;
+
+  const tokenInput = customOpen ? custom : choice;
   const tokenAddress = isAddress(tokenInput.trim())
     ? (tokenInput.trim() as Address)
     : undefined;
   const token = useToken(tokenAddress);
-  const rateAmount = token.data
-    ? tryAmount(rate, token.data.decimals, UINT128_MAX)
+  const symbol = token.data?.symbol ?? "";
+
+  // The terms as stored on-chain: the text itself, plus the link to a longer document when given.
+  const onChain = [terms.trim(), link.trim()].filter(Boolean).join("\n");
+  const termsBytes = byteLength(onChain);
+  const perAmount = token.data
+    ? tryAmount(perPeriod, token.data.decimals, UINT128_MAX)
     : undefined;
-  async function hashFile(file?: File) {
-    if (!file) return;
-    if (file.size > 16 * 1024 * 1024) {
-      setError("Choose a file smaller than 16 MiB to hash in this browser.");
-      return;
-    }
-    try {
-      setHash(keccak256(new Uint8Array(await file.arrayBuffer())));
-      setFileName(file.name);
-      setText("");
-      setError("");
-    } catch (e) {
-      setError(errorText(e));
-    }
-  }
+  const rate = perAmount !== undefined ? perAmount / PERIODS[period] : undefined;
+  const depositAmount = token.data
+    ? tryAmount(deposit, token.data.decimals, UINT128_MAX)
+    : undefined;
+  const coverage =
+    perAmount && depositAmount && perAmount > 0n
+      ? Number((depositAmount * 10n) / perAmount) / 10
+      : undefined;
+
   function review() {
     setInvalid(undefined);
     const fail = (name: string, message: string): never => {
       setInvalid({ name, message });
       document
-        .querySelector<HTMLInputElement>(`input[name="${name}"]`)
+        .querySelector<HTMLElement>(`[name="${name}"]`)
         ?.focus();
       throw new Error(message);
     };
@@ -95,117 +182,119 @@ export function Create() {
       }
     };
     try {
-      if (!account)
-        throw new Error("Connect your wallet before reviewing a stream.");
+      if (!account) throw new Error("Connect your wallet first.");
       if (!eligible.data)
-        throw new Error(
-          "Hold the required WEIR balance before creating a stream.",
-        );
-      const rec = checked("recipient", () => address(recipient)),
-        tok = checked("token", () => address(tokenInput));
+        throw new Error("You need to hold 10,000 WEIR to start a stream.");
+      const rec = checked("recipient", () => address(recipient));
       if (
         [account.toLowerCase(), r.weir.address.toLowerCase()].includes(
           rec.toLowerCase(),
         )
       )
-        fail(
-          "recipient",
-          "The recipient must be someone other than you or the Weir contract.",
-        );
-      if (!token.data)
-        throw new Error("Wait for the token’s symbol and decimals to load.");
-      const rateValue = checked("rate", () =>
-        amount(rate, token.data!.decimals, UINT128_MAX),
+        fail("recipient", "Pay someone other than yourself.");
+      const tok = checked("token", () => address(tokenInput));
+      if (!token.data) throw new Error("Give the token a moment to load.");
+      const per = checked("perPeriod", () =>
+        amount(perPeriod, token.data!.decimals, UINT128_MAX),
       );
+      const rateValue = per / PERIODS[period];
+      if (rateValue === 0n)
+        fail(
+          "perPeriod",
+          `That is less than the smallest unit of ${symbol} per second. Raise the amount.`,
+        );
       const depositValue = checked("deposit", () =>
         amount(deposit, token.data!.decimals, UINT128_MAX),
       );
-      if (!/^0x[0-9a-fA-F]{64}$/.test(hash) || hash === zeroHash)
-        fail("termsHash", "Paste or generate a nonzero 32-byte terms hash.");
-      if (!uri.trim() || !safeUri(uri.trim()))
+      if (!terms.trim())
+        fail("terms", "Say what is being delivered and by when.");
+      if (termsBytes > TERMS_LIMIT)
         fail(
-          "termsUri",
-          "Enter a public https://, http:// or ipfs:// terms URI.",
+          "terms",
+          `Keep the terms under ${TERMS_LIMIT} characters, or shorten them and add a link to the full document.`,
         );
-      if (byteLength(uri.trim()) > 512)
-        fail("termsUri", "Keep the terms URI within 512 UTF-8 bytes.");
-      if (/[\u0000-\u001f\u007f]/.test(uri))
-        fail("termsUri", "Remove control characters from the terms URI.");
+      if (/[\u0000-\u0008\u000b-\u001f\u007f]/.test(onChain))
+        fail("terms", "Remove unusual control characters from the terms.");
+      if (link.trim() && !/^(https?:\/\/|ipfs:\/\/)\S+$/i.test(link.trim()))
+        fail("link", "Use a full https:// or ipfs:// link.");
       setDraft({
         recipient: rec,
         token: tok,
         rate: rateValue,
         deposit: depositValue,
-        hash: hash as Hex,
-        uri: uri.trim(),
+        hash: keccak256(toBytes(onChain)),
+        uri: onChain,
         job: checked("imdJobId", () => jobId(job)),
+        perPeriod: per,
+        period,
       });
       setError("");
+      window.scrollTo(0, 0);
     } catch (e) {
       setError(errorText(e));
     }
   }
+
   return (
     <>
-      <Title>Create a stream</Title>
+      <Title>Start a stream</Title>
       <p className="page-description">
-        Agree on the work, set the pace, and fund the first stretch.
+        Say who, how much, and what for. Money moves per second once it is
+        funded, and you can pause or stop any time.
       </p>
       {!account ? <ConnectPrompt /> : <Eligibility compact />}
       {draft && token.data ? (
-        <section className="form-surface">
-          <h2>Review your stream</h2>
+        <section className="form-surface review-surface">
+          <h2>Check it over</h2>
           <dl className="detail-list">
             <div>
-              <dt>Recipient</dt>
+              <dt>Paying</dt>
               <dd>
                 <AddressView value={draft.recipient} full />
               </dd>
             </div>
             <div>
-              <dt>Token</dt>
+              <dt>How much</dt>
               <dd>
-                {token.data.symbol} <AddressView value={draft.token} />
+                {units(draft.perPeriod, token.data.decimals)} {token.data.symbol}{" "}
+                per {draft.period}
+                <small className="muted">
+                  {units(draft.rate, token.data.decimals)} {token.data.symbol}{" "}
+                  every second, rounded down to the smallest unit
+                </small>
               </dd>
             </div>
             <div>
-              <dt>Rate per second</dt>
-              <dd>
-                {units(draft.rate, token.data.decimals)} {token.data.symbol}
-              </dd>
-            </div>
-            <div>
-              <dt>Per day</dt>
-              <dd>
-                {units(draft.rate * 86400n, token.data.decimals)}{" "}
-                {token.data.symbol}
-              </dd>
-            </div>
-            <div>
-              <dt>Initial deposit</dt>
+              <dt>Starting with</dt>
               <dd>
                 {units(draft.deposit, token.data.decimals)} {token.data.symbol}
+                {coverage !== undefined && (
+                  <small className="muted">
+                    about {coverage} {draft.period}
+                    {coverage === 1 ? "" : "s"} of streaming
+                  </small>
+                )}
               </dd>
             </div>
             <div>
-              <dt>Terms URI</dt>
-              <dd>{draft.uri}</dd>
+              <dt>Terms</dt>
+              <dd className="terms-preview">{draft.uri}</dd>
             </div>
-            <div>
-              <dt>Terms hash</dt>
-              <dd className="hash">{draft.hash}</dd>
-            </div>
-            <div>
-              <dt>IMD job</dt>
-              <dd className="hash">
-                {draft.job === zeroHash ? "None" : draft.job}
-              </dd>
-            </div>
+            {draft.job !== zeroHash && (
+              <div>
+                <dt>IMD job</dt>
+                <dd className="hash">{draft.job}</dd>
+              </div>
+            )}
           </dl>
-          <p>
-            Streaming starts when the create transaction confirms. Only
-            exact-transfer, non-rebasing tokens are supported.
+          <p className="muted">
+            The terms are stored with the stream, word for word. Reviewers read
+            exactly this text if there is ever a disagreement. Two wallet
+            steps: allow Weir to take the deposit, then create the stream.
           </p>
+          {draft.token.toLowerCase() === WETH[r.chain.id]?.toLowerCase() && (
+            <WrapEth needed={draft.deposit} decimals={token.data.decimals} />
+          )}
           <ApprovalAction
             token={token.data}
             amount={draft.deposit}
@@ -247,7 +336,7 @@ export function Create() {
             disabled={busy}
             onClick={() => setDraft(undefined)}
           >
-            Edit details
+            Go back and change something
           </button>
         </section>
       ) : (
@@ -260,11 +349,11 @@ export function Create() {
           noValidate
         >
           <div className="form-surface">
-            <h2>Payment details</h2>
+            <h2>Who and how much</h2>
             <Field
               error={fieldError("recipient")}
-              label="Recipient address"
-              hint="The wallet that will receive the streamed tokens."
+              label="Who are you paying?"
+              hint="Their wallet address. They withdraw what has streamed, any time."
             >
               <input
                 name="recipient"
@@ -275,184 +364,160 @@ export function Create() {
                 placeholder="0x…"
               />
             </Field>
-            <Field
-              error={fieldError("token")}
-              label="Token address"
-              hint="Symbol and decimals are read from the token contract."
-            >
-              <input
-                name="token"
-                autoComplete="off"
-                spellCheck={false}
-                value={tokenInput}
-                onChange={(e) => setTokenInput(e.target.value)}
-                placeholder="0x…"
-              />
+            <Field error={fieldError("token")} label="Pay with">
+              <div className="token-picker" role="radiogroup" aria-label="Token">
+                {named.map((t) => (
+                  <button
+                    type="button"
+                    key={t.address}
+                    role="radio"
+                    aria-checked={!customOpen && choice === t.address}
+                    className={`token-option${!customOpen && choice === t.address ? " selected" : ""}`}
+                    onClick={() => {
+                      setChoice(t.address);
+                      setCustomOpen(false);
+                    }}
+                  >
+                    <strong>{t.label}</strong>
+                    <span>{t.note}</span>
+                  </button>
+                ))}
+                <button
+                  type="button"
+                  role="radio"
+                  aria-checked={customOpen}
+                  className={`token-option${customOpen ? " selected" : ""}`}
+                  onClick={() => setCustomOpen(true)}
+                >
+                  <strong>Another token</strong>
+                  <span>By address</span>
+                </button>
+              </div>
+              {customOpen && (
+                <input
+                  name="token"
+                  autoComplete="off"
+                  spellCheck={false}
+                  value={custom}
+                  onChange={(e) => setCustom(e.target.value)}
+                  placeholder="Token contract address 0x…"
+                  aria-label="Token contract address"
+                />
+              )}
             </Field>
-            <div className="preset-row">
-              <button
-                type="button"
-                onClick={() => setTokenInput(r.token.address)}
-              >
-                Use WEIR
-              </button>
-            </div>
-            {tokenAddress && <QueryState query={token} />}{" "}
-            {token.data && (
-              <p className="token-info">
-                {token.data.symbol} · {token.data.decimals} decimals ·{" "}
-                <AddressView value={token.data.address} />
-              </p>
+            {tokenAddress && <QueryState query={token} />}
+            {tokenAddress?.toLowerCase() === WETH[r.chain.id]?.toLowerCase() && (
+              <small className="muted">
+                ETH is streamed as WETH: we wrap it for you before the stream
+                starts, and the recipient can unwrap it back to ETH any time.
+              </small>
             )}
             <Field
-              error={fieldError("rate")}
-              label={`Rate per second${token.data ? ` (${token.data.symbol})` : ""}`}
+              error={fieldError("perPeriod")}
+              label={`How much${symbol ? ` (${symbol})` : ""}`}
               hint={
-                rateAmount && token.data
-                  ? `${units(rateAmount * 86400n, token.data.decimals)} ${token.data.symbol} per day`
-                  : "Use this token’s units, not its smallest units."
+                rate !== undefined && token.data
+                  ? `${units(rate, token.data.decimals)} ${symbol} every second.`
+                  : "The amount they earn each day or each week while the stream runs."
               }
             >
-              <input
-                name="rate"
-                inputMode="decimal"
-                value={rate}
-                onChange={(e) => setRate(e.target.value)}
-                placeholder="0.001"
-              />
-            </Field>
-            <details className="helper">
-              <summary>Calculate a rate from a daily amount</summary>
-              <Field label="Amount per day">
+              <div className="amount-row">
                 <input
+                  name="perPeriod"
                   inputMode="decimal"
-                  value={daily}
-                  onChange={(e) => setDaily(e.target.value)}
-                  placeholder="86.4"
+                  value={perPeriod}
+                  onChange={(e) => setPerPeriod(e.target.value)}
+                  placeholder="500"
                 />
-              </Field>
-              <button
-                type="button"
-                disabled={!token.data}
-                onClick={() => {
-                  try {
-                    const d = token.data!;
-                    const value = amount(daily, d.decimals) / 86400n;
-                    if (value === 0n)
-                      throw new Error(
-                        "This daily amount is below one smallest token unit per second.",
-                      );
-                    setRate(formatUnits(value, d.decimals));
-                    setError("");
-                  } catch (e) {
-                    setError(errorText(e));
-                  }
-                }}
-              >
-                Use calculated rate
-              </button>
-              <small>
-                Rounded down to a whole smallest token unit per second. Review
-                the resulting daily amount above.
-              </small>
-            </details>
+                <div className="period-toggle" role="radiogroup" aria-label="Per">
+                  {(["day", "week"] as Period[]).map((p) => (
+                    <button
+                      type="button"
+                      key={p}
+                      role="radio"
+                      aria-checked={period === p}
+                      className={period === p ? "selected" : ""}
+                      onClick={() => setPeriod(p)}
+                    >
+                      per {p}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </Field>
             <Field
               error={fieldError("deposit")}
-              label={`Initial deposit${token.data ? ` (${token.data.symbol})` : ""}`}
+              label={`Start with${symbol ? ` (${symbol})` : ""}`}
+              hint={
+                coverage !== undefined
+                  ? `Covers about ${coverage} ${period}${coverage === 1 ? "" : "s"}. You can add more later, and anything unstreamed comes back if you stop.`
+                  : "Your first deposit. You can top up later; whatever has not streamed comes back if you stop."
+              }
             >
               <input
                 name="deposit"
                 inputMode="decimal"
                 value={deposit}
                 onChange={(e) => setDeposit(e.target.value)}
-                placeholder="Amount"
+                placeholder="1000"
               />
             </Field>
-            <small className="muted">
-              Token amounts only. A USD price is not available.
-            </small>
           </div>
           <div className="form-surface">
-            <h2>Agreed terms</h2>
+            <h2>What for</h2>
             <Field
-              error={fieldError("termsUri")}
-              label="Terms URI"
-              hint={`${byteLength(uri)}/512 UTF-8 bytes. Make the terms accessible to both parties and the panel.`}
+              error={fieldError("terms")}
+              label="What are they delivering, by when?"
+              hint={`${termsBytes}/${TERMS_LIMIT} characters. Stored with the stream, word for word. If you ever disagree, five reviewers read exactly this.`}
             >
-              <input
-                name="termsUri"
-                value={uri}
-                onChange={(e) => setUri(e.target.value)}
-                placeholder="https://… or ipfs://…"
+              <textarea
+                name="terms"
+                rows={6}
+                value={terms}
+                onChange={(e) => setTerms(e.target.value)}
+                placeholder="Design and deliver the new landing page (Figma + exported assets) by Friday 24 October. Two rounds of revisions included."
               />
             </Field>
-            <Field
-              error={fieldError("termsHash")}
-              label="Terms hash (keccak256)"
-            >
-              <input
-                name="termsHash"
-                value={hash}
-                onChange={(e) => setHash(e.target.value.trim())}
-                placeholder="0x…"
-                spellCheck={false}
-              />
-            </Field>
-            <details className="helper" open>
-              <summary>Generate a terms hash</summary>
-              <Field label="Paste the exact terms text">
-                <textarea
-                  rows={4}
-                  value={text}
-                  onChange={(e) => {
-                    setText(e.target.value);
-                    setFileName("");
-                    setHash(
-                      e.target.value ? keccak256(toBytes(e.target.value)) : "",
-                    );
-                  }}
+            <details className="helper">
+              <summary>More details (optional)</summary>
+              <Field
+                error={fieldError("link")}
+                label="Link to the full agreement"
+                hint="For longer terms: a public document the reviewers can open. Saved with the text above."
+              >
+                <input
+                  name="link"
+                  value={link}
+                  onChange={(e) => setLink(e.target.value)}
+                  placeholder="https://… or ipfs://…"
                 />
               </Field>
               <Field
-                label="Or choose the terms file"
-                hint="The file stays in your browser. Publish it separately and paste its URI above."
+                error={fieldError("imdJobId")}
+                label="IMD job"
+                hint="If this stream pays for an IMD swarm job, paste its id to link them."
               >
                 <input
-                  type="file"
-                  onChange={(e) => void hashFile(e.target.files?.[0])}
+                  name="imdJobId"
+                  value={job}
+                  onChange={(e) => setJob(e.target.value)}
+                  placeholder="Job id"
                 />
               </Field>
-              {fileName && (
-                <small role="status">
-                  Hashed the exact bytes of {fileName}.
-                </small>
-              )}
             </details>
-            <Field
-              error={fieldError("imdJobId")}
-              label="IMD job ID (optional)"
-              hint="An IMD job UUID or bytes32 ID. Leave empty if this work has no job."
-            >
-              <input
-                name="imdJobId"
-                value={job}
-                onChange={(e) => setJob(e.target.value)}
-                placeholder="Job ID"
-              />
-            </Field>
           </div>
           <div className="form-end">
             {error && <Notice error>{error}</Notice>}
             <p>
-              Check the token, recipient and terms carefully. The client
-              controls the rate and unearned funds.
+              You stay in control of the pace and of anything that has not
+              streamed yet. There is no fee.
             </p>
             <button
               className="primary"
               type="submit"
               disabled={!account || !eligible.data || eligible.isError}
             >
-              Review stream <span aria-hidden="true">↗</span>
+              Check it over
             </button>
           </div>
         </form>

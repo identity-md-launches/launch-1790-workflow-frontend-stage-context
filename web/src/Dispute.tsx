@@ -225,18 +225,18 @@ export function DisputeDialog({
   }
   return (
     <Dialog
-      title={`Dispute stream #${id}`}
+      title={`Ask the reviewers · stream #${id}`}
       onClose={() => {
         if (!pending) onClose();
       }}
     >
       <p>
-        The stream pauses while five panel members consider the work. Four must
-        agree.
+        The stream pauses while five independent reviewers look at the work.
+        Four must agree. They read the terms exactly as written and your note.
       </p>
       <Field
-        label="Dispute note"
-        hint={`${byteLength(note)}/280 UTF-8 bytes. This note becomes public.`}
+        label="Your note to the reviewers"
+        hint={`${byteLength(note)}/280 characters. This note is public.`}
       >
         <textarea
           rows={3}
@@ -260,74 +260,71 @@ export function DisputeDialog({
         }
       >
         {loading
-          ? "Reading question and costs…"
-          : quote
-            ? "Refresh dispute preview"
-            : "Review dispute"}
+          ? "Working out the cost…"
+            : quote
+              ? "Refresh"
+              : "See the question and the cost"}
       </button>
       {!gate.ready && <Notice>{gate.reason}</Notice>}
       {canUse.data === false && (
         <Notice error>
-          Hold the required WEIR balance to raise a dispute.
+          You need to hold 10,000 WEIR to raise a dispute.
         </Notice>
       )}
       <QueryState query={imdToken} />
       {error && <Notice error>{error}</Notice>}
       {quote && imdToken.data && (
         <div className="dispute-review">
-          <h3>The exact oracle question</h3>
+          <h3>What the reviewers will be asked</h3>
           <blockquote className="question">{quote.question}</blockquote>
           <small className="muted">
-            Read from expectedBody at block {quote.block.toString()}. The
-            execution block number changes when mined; the paid question is
-            recorded in QuestionCommitted.
+            The block number in the question is filled in when the dispute is
+            sent.
           </small>
           <details>
-            <summary>View expectedBody JSON</summary>
+            <summary>Technical details</summary>
             <pre className="body-json">{quote.body}</pre>
           </details>
           <dl className="detail-list">
             <div>
-              <dt>Your bond</dt>
+              <dt>Your deposit</dt>
               <dd>
                 {units(quote.bond, token.decimals)} {token.symbol}
               </dd>
             </div>
             <div>
-              <dt>Oracle price now</dt>
+              <dt>Reviewers’ fee</dt>
               <dd>
                 {units(quote.price, imdToken.data.decimals)}{" "}
                 {imdToken.data.symbol}
               </dd>
             </div>
             <div>
-              <dt>Who pays the oracle</dt>
+              <dt>Who pays the fee</dt>
               <dd>
                 {quote.fund >= quote.price
-                  ? "The court fund"
-                  : "You, the caller"}
+                  ? "The court fund covers it"
+                  : "You do"}
               </dd>
             </div>
           </dl>
           <p className="muted">
-            The launch price is 0.5 IMD. The live price above is read from the
-            Intake through Weir.
+            The fee is read live from the reviewers’ service.
           </p>
           <p>
-            The oracle fee is spent even if the panel cannot agree. Losing sends
-            the bond to the counterparty; a win, failure or timeout releases it
-            to the person who posted it.
+            The fee is spent even if the reviewers cannot agree. If they rule
+            against you, your deposit goes to the other side. If they rule for
+            you, or cannot decide, you get it back.
           </p>
           {stream.recipient.toLowerCase() === address?.toLowerCase() && (
             <p>
-              Raising this dispute also accepts the stream’s terms, so a ruling
-              will count in both parties’ records.
+              Disputing also counts as accepting the terms, so the decision
+              goes on both track records.
             </p>
           )}
           <p className="muted">
-            The fund may be spent before confirmation. If that happens, the
-            contract can charge your wallet using an existing IMD allowance.
-            Review existing allowances before signing.
+            If the court fund runs out before your dispute lands, the fee is
+            taken from your wallet instead.
           </p>
           {requests.map((req, i) => (
             <DisputeApproval
@@ -338,13 +335,13 @@ export function DisputeDialog({
                   : imdToken.data!
               }
               required={req.amount}
-              label={`${i + 1}. Approve ${req.kind}`}
+              label={`${i + 1}. Allow the ${req.kind.replace("bond", "deposit").replace("oracle fee", "reviewers’ fee")}`}
               disabled={pending || !canUse.data || canUse.isError}
               onBusy={onApprovalBusy}
             />
           ))}
           <TxButton
-            label="Raise dispute"
+            label="Send to the reviewers"
             primary
             pending={tx.pending}
             phase={tx.state.phase}

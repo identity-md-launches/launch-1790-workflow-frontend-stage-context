@@ -75,10 +75,14 @@ export function safeUri(uri: string): string | undefined {
   }
 }
 export const short = (a: string) => `${a.slice(0, 6)}…${a.slice(-4)}`;
-export function units(value: bigint, decimals: number) {
-  const [whole, fraction] = formatUnits(value, decimals).split(".");
-  return `${whole.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}${fraction ? `.${fraction}` : ""}`;
+/** Human amount: thousands separators, at most 6 decimals (trailing zeros trimmed). `exact()` keeps every digit. */
+export function units(value: bigint, decimals: number, maxFraction = 6) {
+  const [whole, fraction = ""] = formatUnits(value, decimals).split(".");
+  const trimmed = fraction.slice(0, maxFraction).replace(/0+$/, "");
+  const tiny = value > 0n && whole === "0" && trimmed === "" ? "<0.000001" : null;
+  return tiny ?? `${whole.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}${trimmed ? `.${trimmed}` : ""}`;
 }
+export const exact = (value: bigint, decimals: number) => units(value, decimals, 255);
 export type Stream = {
   client: Address;
   recipient: Address;

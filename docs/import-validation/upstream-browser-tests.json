@@ -1,0 +1,113 @@
+{
+  "manifestSha256": "5126f34f3b39af42e0e11a6e475bbbb684f1c83f1bc5ed22022e601cb54bd80b",
+  "testedAt": "2026-10-15T11:55:17.572Z",
+  "mode": "Production export, local static subpath, mocked EIP-1193 wallet and JSON-RPC; no funded transactions",
+  "passed": 2,
+  "failed": 16,
+  "results": [
+    {
+      "name": "Static subpath, metadata, mobile first screen and all page reflow",
+      "passed": false,
+      "error": "expect(locator).toBeVisible() failed\n\nLocator: locator('main h1')\nExpected: visible\nError: strict mode violation: locator('main h1') resolved to 2 elements:\n    1) <h1>Pay as the work flows.</h1> aka getByRole('heading', { name: 'Pay as the work flows.' })\n    2) <h1 tabindex=\"-1\" class=\"r r-headline\">Pay as the work flows.</h1> aka getByRole('region', { name: 'How Weir works' }).getByText('Pay as the work flows.')\n\nCall log:\n  - Expect \"toBeVisible\" locator('main h1') with timeout 5000ms\n  - waiting for locator('main h1')\n",
+      "browserErrors": []
+    },
+    {
+      "name": "EIP-6963 discovery, exact add-chain fallback and connected eligibility",
+      "passed": false,
+      "error": "expect(locator).toBeVisible() failed\n\nLocator: locator('main h1')\nExpected: visible\nError: strict mode violation: locator('main h1') resolved to 2 elements:\n    1) <h1>Pay as the work flows.</h1> aka getByText('Pay as the work flows.').first()\n    2) <h1 tabindex=\"-1\" class=\"r r-headline\">Pay as the work flows.</h1> aka getByRole('heading', { name: 'Pay as the work flows.' })\n\nCall log:\n  - Expect \"toBeVisible\" locator('main h1') with timeout 5000ms\n  - waiting for locator('main h1')\n",
+      "browserErrors": []
+    },
+    {
+      "name": "Wallet sheet keyboard trap, Escape and focus restoration",
+      "passed": false,
+      "error": "expect(locator).toBeVisible() failed\n\nLocator: locator('main h1')\nExpected: visible\nError: strict mode violation: locator('main h1') resolved to 2 elements:\n    1) <h1>Pay as the work flows.</h1> aka getByText('Pay as the work flows.').first()\n    2) <h1 tabindex=\"-1\" class=\"r r-headline\">Pay as the work flows.</h1> aka getByRole('heading', { name: 'Pay as the work flows.' })\n\nCall log:\n  - Expect \"toBeVisible\" locator('main h1') with timeout 5000ms\n  - waiting for locator('main h1')\n",
+      "browserErrors": []
+    },
+    {
+      "name": "Phone wallet picker exposes all four app links and Coinbase Smart Wallet",
+      "passed": false,
+      "error": "expect(locator).toBeVisible() failed\n\nLocator: locator('main h1')\nExpected: visible\nError: strict mode violation: locator('main h1') resolved to 2 elements:\n    1) <h1>Pay as the work flows.</h1> aka getByRole('heading', { name: 'Pay as the work flows.' })\n    2) <h1 tabindex=\"-1\" class=\"r r-headline\">Pay as the work flows.</h1> aka getByRole('region', { name: 'How Weir works' }).getByText('Pay as the work flows.')\n\nCall log:\n  - Expect \"toBeVisible\" locator('main h1') with timeout 5000ms\n  - waiting for locator('main h1')\n",
+      "browserErrors": []
+    },
+    {
+      "name": "Rejected network switch remains visible and blocks writes",
+      "passed": false,
+      "error": "expect(locator).toBeVisible() failed\n\nLocator: locator('main h1')\nExpected: visible\nError: strict mode violation: locator('main h1') resolved to 2 elements:\n    1) <h1>Pay as the work flows.</h1> aka getByText('Pay as the work flows.').first()\n    2) <h1 tabindex=\"-1\" class=\"r r-headline\">Pay as the work flows.</h1> aka getByRole('heading', { name: 'Pay as the work flows.' })\n\nCall log:\n  - Expect \"toBeVisible\" locator('main h1') with timeout 5000ms\n  - waiting for locator('main h1')\n",
+      "browserErrors": []
+    },
+    {
+      "name": "Create 6-decimal stream: terms hash, approval, pending and encoded amount",
+      "passed": false,
+      "error": "locator.fill: Timeout 12000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByLabel('Recipient address')\u001b[22m\n",
+      "browserErrors": []
+    },
+    {
+      "name": "Terms file bytes and invalid address/precision stop creation",
+      "passed": false,
+      "error": "locator.setInputFiles: Timeout 12000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByLabel('Or choose the terms file')\u001b[22m\n",
+      "browserErrors": []
+    },
+    {
+      "name": "Court sponsorship stages IMD approval, shows rejection, then confirms",
+      "passed": false,
+      "error": "expect(locator).toBeVisible() failed\n\nLocator: locator('main h1')\nExpected: visible\nError: strict mode violation: locator('main h1') resolved to 2 elements:\n    1) <h1>Pay as the work flows.</h1> aka getByText('Pay as the work flows.').first()\n    2) <h1 tabindex=\"-1\" class=\"r r-headline\">Pay as the work flows.</h1> aka getByRole('heading', { name: 'Pay as the work flows.' })\n\nCall log:\n  - Expect \"toBeVisible\" locator('main h1') with timeout 5000ms\n  - waiting for locator('main h1')\n",
+      "browserErrors": []
+    },
+    {
+      "name": "Client: deposit, pause, restart, adjust, refund, max refund and void",
+      "passed": false,
+      "error": "expect(locator).toBeEnabled() failed\n\nLocator: getByRole('button', { name: 'Pause stream', exact: true })\nExpected: enabled\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeEnabled\" getByRole('button', { name: 'Pause stream', exact: true }) with timeout 5000ms\n  - waiting for getByRole('button', { name: 'Pause stream', exact: true })\n",
+      "browserErrors": []
+    },
+    {
+      "name": "Recipient: accept, withdraw amount, withdraw max and claim deferred payout",
+      "passed": true
+    },
+    {
+      "name": "Dispute exact preview, staged token and IMD approvals, bounded bond",
+      "passed": false,
+      "error": "locator.fill: Timeout 12000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByLabel('Dispute note')\u001b[22m\n",
+      "browserErrors": []
+    },
+    {
+      "name": "IMD stream merges bond and fee into a single exact allowance",
+      "passed": false,
+      "error": "locator.fill: Timeout 12000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByLabel('Dispute note')\u001b[22m\n",
+      "browserErrors": []
+    },
+    {
+      "name": "Fund-paid dispute skips fee approval and rechecks a changed payer",
+      "passed": false,
+      "error": "locator.click: Timeout 12000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Review dispute', exact: true })\u001b[22m\n",
+      "browserErrors": []
+    },
+    {
+      "name": "Anyone can enforce or expire strictly after timeout",
+      "passed": false,
+      "error": "expect(locator).toBeEnabled() failed\n\nLocator: getByRole('button', { name: 'Expire dispute', exact: true })\nExpected: enabled\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeEnabled\" getByRole('button', { name: 'Expire dispute', exact: true }) with timeout 5000ms\n  - waiting for getByRole('button', { name: 'Expire dispute', exact: true })\n",
+      "browserErrors": []
+    },
+    {
+      "name": "Custom contract error prevents signature and remains actionable",
+      "passed": false,
+      "error": "locator.click: Timeout 12000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Pause stream', exact: true })\u001b[22m\n",
+      "browserErrors": []
+    },
+    {
+      "name": "StreamCreated lists both roles, live values and address records",
+      "passed": false,
+      "error": "locator.click: Timeout 12000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'As recipient', exact: true })\u001b[22m\n",
+      "browserErrors": []
+    },
+    {
+      "name": "Missing code disables signing, including with a connected wallet",
+      "passed": true
+    },
+    {
+      "name": "Long connected values, mobile dialog, reduced motion and reflow",
+      "passed": false,
+      "error": "expect(locator).toBeVisible() failed\n\nLocator: locator('main h1')\nExpected: visible\nError: strict mode violation: locator('main h1') resolved to 2 elements:\n    1) <h1>Pay as the work flows.</h1> aka getByText('Pay as the work flows.').first()\n    2) <h1 tabindex=\"-1\" class=\"r r-headline\">Pay as the work flows.</h1> aka getByRole('heading', { name: 'Pay as the work flows.' })\n\nCall log:\n  - Expect \"toBeVisible\" locator('main h1') with timeout 5000ms\n  - waiting for locator('main h1')\n",
+      "browserErrors": []
+    }
+  ]
+}

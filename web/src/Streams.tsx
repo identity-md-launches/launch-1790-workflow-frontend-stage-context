@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useAccount } from "wagmi";
 import { zeroHash } from "viem";
-import { useCreatedEvents } from "./history";
+import { useMyStreamIds } from "./history";
 import { useStream, useToken } from "./data";
 import { displayJob, safeUri, stateLabel, units } from "./domain";
 import { LINKS } from "./config";
@@ -49,16 +49,16 @@ export function StreamRow({ id }: { id: bigint }) {
           <QueryState query={token} />
           <div className="row-links">
             {safeUri(s.termsURI) ? (
-              <External href={safeUri(s.termsURI)!}>Read terms</External>
+              <External href={safeUri(s.termsURI)!}>Open the agreement</External>
             ) : (
-              <span className="hash">Terms: {s.termsURI || "No URI"}</span>
+              <span className="terms-inline">{s.termsURI}</span>
             )}
             {s.imdJobId !== zeroHash && (
               <External href={LINKS.job(displayJob(s.imdJobId))}>
                 View IMD job
               </External>
             )}
-            <a href={`#/stream/${id}`}>Manage stream →</a>
+            <a href={`#/stream/${id}`}>Open →</a>
           </div>
         </>
       )}
@@ -67,34 +67,24 @@ export function StreamRow({ id }: { id: bigint }) {
 }
 export function Streams() {
   const { address } = useAccount();
-  const q = useCreatedEvents(address);
+  const q = useMyStreamIds(address);
   const [role, setRole] = useState<"client" | "recipient">("client");
   const [lookup, setLookup] = useState("");
   const [error, setError] = useState("");
-  const events = [
-    ...new Map(
-      (q.data?.pages.flatMap((p) => p.events) ?? [])
-        .filter(
-          (e) => String(e.args[role]).toLowerCase() === address?.toLowerCase(),
-        )
-        .map((e) => [String(e.args.id), e]),
-    ).values(),
-  ].sort((a, b) =>
-    Number(BigInt(String(b.args.id)) - BigInt(String(a.args.id))),
-  );
+  const ids = q.data?.[role] ?? [];
   return (
     <>
       <Title
         aside={
           <a href="#/create" className="button primary">
-            Create stream ↗
+            Start a stream ↗
           </a>
         }
       >
         My streams
       </Title>
       <p className="page-description">
-        Payments you fund and payments you receive.
+        Streams you pay and streams that pay you.
       </p>
       <form
         className="lookup-form"
@@ -103,15 +93,15 @@ export function Streams() {
           if (/^[1-9]\d*$/.test(lookup)) {
             setError("");
             location.hash = `/stream/${lookup}`;
-          } else setError("Enter a stream ID greater than zero.");
+          } else setError("Enter a stream number greater than zero.");
         }}
       >
-        <Field label="Open a stream by ID">
+        <Field label="Open a stream by its number">
           <input
             inputMode="numeric"
             value={lookup}
             onChange={(e) => setLookup(e.target.value)}
-            placeholder="Stream ID"
+            placeholder="Stream number"
           />
         </Field>
         <button type="submit">Open stream</button>
@@ -126,51 +116,41 @@ export function Streams() {
               aria-pressed={role === "client"}
               onClick={() => setRole("client")}
             >
-              As client
+              I pay
             </button>
             <button
               aria-pressed={role === "recipient"}
               onClick={() => setRole("recipient")}
             >
-              As recipient
+              I get paid
             </button>
             <button
               className="refresh-button"
               disabled={q.isFetching}
               onClick={() => q.refetch()}
             >
-              {q.isFetching ? "Refreshing…" : "Refresh history"}
+              {q.isFetching ? "Refreshing…" : "Refresh"}
             </button>
           </div>
           <QueryState query={q} />
-          {events.map((e) => (
-            <StreamRow key={String(e.args.id)} id={BigInt(String(e.args.id))} />
+          {ids.map((id) => (
+            <StreamRow key={id.toString()} id={id} />
           ))}
-          {!q.isPending && !q.isError && events.length === 0 && (
+          {!q.isPending && !q.isError && ids.length === 0 && (
             <div className="empty">
-              <h2>No {role} streams in these blocks</h2>
+              <h2>Nothing here yet</h2>
               <p>
-                {q.hasNextPage
-                  ? "Search older blocks to find earlier streams, or open a stream by its ID above."
-                  : "No streams found for this wallet since deployment."}
+                {role === "client"
+                  ? "This wallet has not started a stream yet."
+                  : "No stream pays this wallet yet."}
               </p>
-              <a href="#/create">Create a stream →</a>
+              <a href="#/create">Start a stream →</a>
             </div>
           )}
           {q.data && (
             <p className="muted history-range">
-              StreamCreated events scanned from block{" "}
-              {q.data.pages.at(-1)!.from.toString()} to{" "}
-              {q.data.pages[0].to.toString()}.{" "}
-              {q.hasNextPage
-                ? "Earlier history is available."
-                : "Deployment history fully scanned."}
+              Checked all {q.data.count.toString()} streams on the contract.
             </p>
-          )}
-          {q.hasNextPage && (
-            <button disabled={q.isFetching} onClick={() => q.fetchNextPage()}>
-              {q.isFetchingNextPage ? "Searching…" : "Load older streams"}
-            </button>
           )}
         </>
       )}

@@ -1,3 +1,5 @@
+> Historical document from the previous frontend delivery. For the approved import at `fc3ac859dfbcd4f5bb030c577b4dec6657e33303`, see [current validation](IMPORT_VALIDATION.md) and [current design documentation](../DESIGN.md). The evidence below was not rerun for this export.
+
 # Weir frontend validation
 
 The frontend source, lockfile and static export are complete within `web/`, `dist/` and `docs/`. Deployed contracts and root build configuration were preserved. This is worker-produced evidence, not independent certification or a contract audit. No funded transaction, deployment or publication was performed.

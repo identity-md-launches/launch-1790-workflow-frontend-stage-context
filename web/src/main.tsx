@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { loadRuntime } from "./config";
 import { RuntimeContext } from "./data";
 import { App } from "./App";
+import { Town } from "./Town";
 import "./style.css";
 
 class ErrorBoundary extends Component<
@@ -28,6 +29,14 @@ class ErrorBoundary extends Component<
   }
 }
 const root = createRoot(document.getElementById("root")!);
+// First paint: the town itself, before the deployment file and wallet runtime arrive.
+const firstPaint = (location.hash.slice(1) || "/") === "/";
+if (firstPaint)
+  root.render(
+    <main id="main" className="page home" tabIndex={-1}>
+      <Town staticShell />
+    </main>,
+  );
 loadRuntime()
   .then((runtime) => {
     const query = new QueryClient({
@@ -47,7 +56,9 @@ loadRuntime()
   })
   .catch((error) =>
     root.render(
-      <main className="page">
+      <main className={`page${firstPaint ? " home" : ""}`}>
+        {firstPaint && <Town staticShell />}
+        <div className="page-inner">
         <h1>Deployment could not be verified</h1>
         <p role="alert">
           {error instanceof Error
@@ -59,6 +70,7 @@ loadRuntime()
           loaded.
         </p>
         <button onClick={() => location.reload()}>Reload Weir</button>
+        </div>
       </main>,
     ),
   );

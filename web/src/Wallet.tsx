@@ -246,7 +246,7 @@ export function WalletControl() {
 export function ConnectPrompt() {
   return (
     <div className="notice">
-      <p>Connect your wallet to see your balances and available actions.</p>
+      <p>Connect your wallet to see what you can do.</p>
       <button onClick={openWallet}>Connect wallet</button>
     </div>
   );

@@ -2,14 +2,15 @@ import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRuntime, useVerification } from "./data";
-import { LINKS } from "./config";
 import { WalletControl } from "./Wallet";
 import { Home } from "./Home";
 import { Create } from "./Create";
 import { Streams } from "./Streams";
 import { StreamPage } from "./StreamPage";
 import { Records } from "./Records";
-import { AddressView, External, Notice } from "./ui";
+import { Receipt } from "./Receipt";
+import { AddressView, Notice } from "./ui";
+import { Mark } from "./Town";
 import { errorText } from "./domain";
 
 export function App() {
@@ -29,7 +30,7 @@ export function App() {
   useEffect(() => {
     const h1 = document.querySelector<HTMLElement>("h1");
     h1?.focus({ preventScroll: true });
-    document.title = `Weir · ${route === "/" ? "Pay as the work flows" : route.startsWith("/stream/") ? `Stream #${route.split("/")[2]}` : ({ "/create": "Create stream", "/streams": "My streams", "/records": "Public records" }[route] ?? "Page not found")}`;
+    document.title = `Weir. · ${route === "/" ? "Pay as the work flows" : route.includes("/receipt/") ? `Receipt · stream #${route.split("/")[2]}` : route.startsWith("/stream/") ? `Stream #${route.split("/")[2]}` : ({ "/create": "Start a stream", "/streams": "My streams", "/records": "Public records" }[route] ?? "Page not found")}`;
   }, [route]);
   useEffect(() => {
     void cache.invalidateQueries({
@@ -40,6 +41,7 @@ export function App() {
     });
   }, [address, chainId, cache]);
   const id = /^\/stream\/([1-9]\d*)$/.exec(route)?.[1];
+  const receipt = /^\/stream\/([1-9]\d*)\/receipt\/(client|freelancer)$/.exec(route);
   const page =
     route === "/" ? (
       <Home />
@@ -49,6 +51,8 @@ export function App() {
       <Streams />
     ) : route === "/records" ? (
       <Records />
+    ) : receipt ? (
+      <Receipt key={route} id={BigInt(receipt[1])} role={receipt[2] as "client" | "freelancer"} />
     ) : id ? (
       <StreamPage key={id} id={BigInt(id)} />
     ) : (
@@ -70,13 +74,12 @@ export function App() {
       >
         Skip to content
       </a>
+      {route !== "/" && (
       <header className="site-header">
         <div className="topbar">
           <a href="#/" className="brand" aria-label="Weir home">
-            <svg width="36" height="36" viewBox="0 0 64 64" aria-hidden="true">
-              <path d="M8 16v22c0 16 22 16 22 0V16m4 0v22c0 16 22 16 22 0V16" />
-            </svg>
-            <span>weir</span>
+            <Mark size="36px" />
+            <span>Weir<span className="brand-period">.</span></span>
           </a>
           <div className="header-right">
             <span className="network-label">
@@ -89,7 +92,7 @@ export function App() {
         <nav aria-label="Main navigation">
           {[
             ["/", "Home"],
-            ["/create", "Create stream"],
+            ["/create", "Start a stream"],
             ["/streams", "My streams"],
             ["/records", "Records"],
           ].map(([path, label]) => (
@@ -107,7 +110,8 @@ export function App() {
           ))}
         </nav>
       </header>
-      <main id="main" className="page" tabIndex={-1}>
+      )}
+      <main id="main" className={`page${route === "/" ? " home" : ""}`} tabIndex={-1}>
         {verification.isError && (
           <div className="verification-error">
             <Notice error>
@@ -127,18 +131,13 @@ export function App() {
       <footer className="site-footer">
         <div className="footer-main">
           <a className="brand footer-brand" href="#/">
-            weir<span className="brand-period">.</span>
+            Weir<span className="brand-period">.</span>
           </a>
           <p>
             Open source. No application fee.
             <br />
-            Not audited. The swarm’s panel review is not an audit.
+            Audited by IMD Swarm. Use at your own risk.
           </p>
-          <div className="footer-links">
-            <External href={LINKS.repo}>Source on GitHub</External>
-            <External href={LINKS.oracleDocs}>IdentityMD oracle docs</External>
-            <a href="./imd-deployment.json">Deployment manifest</a>
-          </div>
         </div>
         <details className="deployment-details">
           <summary>Deployment & network</summary>

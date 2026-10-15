@@ -1,0 +1,76 @@
+{
+  "engine": "axe-core 4.10.3",
+  "results": [
+    {
+      "route": "/",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 2
+        }
+      ],
+      "passedRules": 39
+    },
+    {
+      "route": "/create",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 1
+        }
+      ],
+      "passedRules": 41
+    },
+    {
+      "route": "/streams",
+      "violations": [],
+      "incomplete": [],
+      "passedRules": 35
+    },
+    {
+      "route": "/records",
+      "violations": [],
+      "incomplete": [],
+      "passedRules": 36
+    },
+    {
+      "route": "/stream/1/receipt/client",
+      "violations": [],
+      "incomplete": [],
+      "passedRules": 35
+    },
+    {
+      "route": "/create + wallet dialog",
+      "violations": [],
+      "passedRules": 20
+    }
+  ],
+  "solidColorPairs": [
+    {
+      "selector": "body",
+      "foreground": "rgb(10, 11, 17)",
+      "background": "rgb(248, 248, 248)",
+      "ratio": 18.5
+    },
+    {
+      "selector": ".page-description",
+      "foreground": "rgb(74, 81, 96)",
+      "background": "rgb(248, 248, 248)",
+      "ratio": 7.5
+    },
+    {
+      "selector": ".primary",
+      "foreground": "rgb(74, 81, 96)",
+      "background": "rgb(238, 243, 247)",
+      "ratio": 7.13
+    },
+    {
+      "selector": ".form-surface",
+      "foreground": "rgb(10, 11, 17)",
+      "background": "rgb(255, 255, 255)",
+      "ratio": 19.65
+    }
+  ]
+}

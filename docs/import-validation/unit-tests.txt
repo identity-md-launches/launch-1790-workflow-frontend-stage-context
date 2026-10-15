@@ -1,0 +1,23 @@
+
+> weir-web@1.0.0 test
+> tsx --test tests/domain.test.ts
+
+✔ 6-decimal token amounts retain exact units (17.986768ms)
+✔ contract width is checked before encoding (1.184803ms)
+✔ job UUIDs use right-padded bytes32 and round-trip (0.84369ms)
+✔ untrusted terms cannot produce executable links (0.417731ms)
+✔ note limit counts UTF-8 bytes rather than characters (0.378602ms)
+✔ client and recipient controls follow deployed states (1.251578ms)
+✔ IMD stream allowance combines the bond and caller fee (1.852505ms)
+✔ ABI bindings equal the attested hashes (51.101038ms)
+✔ unknown chain offers exact add-chain parameters then retries switching (6.521763ms)
+✔ a rejected switch never triggers add-chain (1.062433ms)
+✔ custom reverts and rejected signatures receive useful copy (3.780909ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1904.696141

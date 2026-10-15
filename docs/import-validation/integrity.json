@@ -1,0 +1,27 @@
+{
+  "approvedCommit": "fc3ac859dfbcd4f5bb030c577b4dec6657e33303",
+  "source": "https://github.com/SwarmStream/swarmstream/tree/fc3ac859dfbcd4f5bb030c577b4dec6657e33303",
+  "directories": {
+    "web": {
+      "files": 76,
+      "bytes": 2695697,
+      "identicalToApproved": true
+    },
+    "dist": {
+      "files": 42,
+      "bytes": 3200266,
+      "identicalToApproved": true
+    }
+  },
+  "rebuildIdentical": true,
+  "protectedHashes": {
+    "dist/imd-deployment.json": "5126f34f3b39af42e0e11a6e475bbbb684f1c83f1bc5ed22022e601cb54bd80b",
+    "dist/abi/LaunchToken.json": "47e57a3fcbad55990d5fb2b23a5b67e1dc571d9a4e5ba90035ad77d71b0227f9",
+    "dist/abi/Weir.json": "d2cc99665f33b4b47ce9c7f6c8dd8637b2c189cae2276ed0857a8f51d70a1103"
+  },
+  "plates": {
+    "countPerDirectory": 9,
+    "bothDirectoriesUnchanged": true
+  },
+  "manifestAssetInventoryValid": true
+}

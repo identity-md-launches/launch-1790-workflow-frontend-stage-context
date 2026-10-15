@@ -1,0 +1,440 @@
+{
+  "results": [
+    {
+      "name": "All seven hash routes render at 360, 390, 640, 768, 900, 901 and 1440; no horizontal page overflow",
+      "passed": true
+    },
+    {
+      "name": "390 first screen, primary navigation, internal street pan, local fonts and metadata",
+      "passed": true
+    },
+    {
+      "name": "Desktop overview and 320px limitation measured",
+      "passed": true
+    },
+    {
+      "name": "Wallet keyboard trap, Escape, focus restoration and EIP-6963 chain add/switch",
+      "passed": true
+    },
+    {
+      "name": "Phone app links and Coinbase Smart Wallet",
+      "passed": true
+    },
+    {
+      "name": "Creation validation, day/week choice, exact approval and simulated creation",
+      "passed": true
+    },
+    {
+      "name": "Records lookup error and five on-chain counters",
+      "passed": true
+    },
+    {
+      "name": "Stream lookup, connected role filters and receipt links",
+      "passed": true
+    },
+    {
+      "name": "Both receipt roles, copy, print trigger, print layout and ruling states",
+      "passed": true
+    },
+    {
+      "name": "Wrong network rejection disables writes and allows retry",
+      "passed": true
+    },
+    {
+      "name": "Simulated client pause/restart and rejected signature recovery",
+      "passed": true
+    },
+    {
+      "name": "Reduced motion stops coin animation",
+      "passed": true
+    }
+  ],
+  "observations": [
+    {
+      "name": "route-widths",
+      "values": [
+        {
+          "width": 360,
+          "route": "/",
+          "viewport": 360,
+          "document": 360
+        },
+        {
+          "width": 360,
+          "route": "/create",
+          "viewport": 360,
+          "document": 360
+        },
+        {
+          "width": 360,
+          "route": "/streams",
+          "viewport": 360,
+          "document": 360
+        },
+        {
+          "width": 360,
+          "route": "/records",
+          "viewport": 360,
+          "document": 360
+        },
+        {
+          "width": 360,
+          "route": "/stream/1",
+          "viewport": 360,
+          "document": 360
+        },
+        {
+          "width": 360,
+          "route": "/stream/1/receipt/client",
+          "viewport": 360,
+          "document": 360
+        },
+        {
+          "width": 360,
+          "route": "/stream/1/receipt/freelancer",
+          "viewport": 360,
+          "document": 360
+        },
+        {
+          "width": 390,
+          "route": "/",
+          "viewport": 390,
+          "document": 390
+        },
+        {
+          "width": 390,
+          "route": "/create",
+          "viewport": 390,
+          "document": 390
+        },
+        {
+          "width": 390,
+          "route": "/streams",
+          "viewport": 390,
+          "document": 390
+        },
+        {
+          "width": 390,
+          "route": "/records",
+          "viewport": 390,
+          "document": 390
+        },
+        {
+          "width": 390,
+          "route": "/stream/1",
+          "viewport": 390,
+          "document": 390
+        },
+        {
+          "width": 390,
+          "route": "/stream/1/receipt/client",
+          "viewport": 390,
+          "document": 390
+        },
+        {
+          "width": 390,
+          "route": "/stream/1/receipt/freelancer",
+          "viewport": 390,
+          "document": 390
+        },
+        {
+          "width": 640,
+          "route": "/",
+          "viewport": 640,
+          "document": 640
+        },
+        {
+          "width": 640,
+          "route": "/create",
+          "viewport": 640,
+          "document": 640
+        },
+        {
+          "width": 640,
+          "route": "/streams",
+          "viewport": 640,
+          "document": 640
+        },
+        {
+          "width": 640,
+          "route": "/records",
+          "viewport": 640,
+          "document": 640
+        },
+        {
+          "width": 640,
+          "route": "/stream/1",
+          "viewport": 640,
+          "document": 640
+        },
+        {
+          "width": 640,
+          "route": "/stream/1/receipt/client",
+          "viewport": 640,
+          "document": 640
+        },
+        {
+          "width": 640,
+          "route": "/stream/1/receipt/freelancer",
+          "viewport": 640,
+          "document": 640
+        },
+        {
+          "width": 768,
+          "route": "/",
+          "viewport": 768,
+          "document": 768
+        },
+        {
+          "width": 768,
+          "route": "/create",
+          "viewport": 768,
+          "document": 768
+        },
+        {
+          "width": 768,
+          "route": "/streams",
+          "viewport": 768,
+          "document": 768
+        },
+        {
+          "width": 768,
+          "route": "/records",
+          "viewport": 768,
+          "document": 768
+        },
+        {
+          "width": 768,
+          "route": "/stream/1",
+          "viewport": 768,
+          "document": 768
+        },
+        {
+          "width": 768,
+          "route": "/stream/1/receipt/client",
+          "viewport": 768,
+          "document": 768
+        },
+        {
+          "width": 768,
+          "route": "/stream/1/receipt/freelancer",
+          "viewport": 768,
+          "document": 768
+        },
+        {
+          "width": 900,
+          "route": "/",
+          "viewport": 900,
+          "document": 900
+        },
+        {
+          "width": 900,
+          "route": "/create",
+          "viewport": 900,
+          "document": 900
+        },
+        {
+          "width": 900,
+          "route": "/streams",
+          "viewport": 900,
+          "document": 900
+        },
+        {
+          "width": 900,
+          "route": "/records",
+          "viewport": 900,
+          "document": 900
+        },
+        {
+          "width": 900,
+          "route": "/stream/1",
+          "viewport": 900,
+          "document": 900
+        },
+        {
+          "width": 900,
+          "route": "/stream/1/receipt/client",
+          "viewport": 900,
+          "document": 900
+        },
+        {
+          "width": 900,
+          "route": "/stream/1/receipt/freelancer",
+          "viewport": 900,
+          "document": 900
+        },
+        {
+          "width": 901,
+          "route": "/",
+          "viewport": 901,
+          "document": 901
+        },
+        {
+          "width": 901,
+          "route": "/create",
+          "viewport": 901,
+          "document": 901
+        },
+        {
+          "width": 901,
+          "route": "/streams",
+          "viewport": 901,
+          "document": 901
+        },
+        {
+          "width": 901,
+          "route": "/records",
+          "viewport": 901,
+          "document": 901
+        },
+        {
+          "width": 901,
+          "route": "/stream/1",
+          "viewport": 901,
+          "document": 901
+        },
+        {
+          "width": 901,
+          "route": "/stream/1/receipt/client",
+          "viewport": 901,
+          "document": 901
+        },
+        {
+          "width": 901,
+          "route": "/stream/1/receipt/freelancer",
+          "viewport": 901,
+          "document": 901
+        },
+        {
+          "width": 1440,
+          "route": "/",
+          "viewport": 1440,
+          "document": 1440
+        },
+        {
+          "width": 1440,
+          "route": "/create",
+          "viewport": 1440,
+          "document": 1440
+        },
+        {
+          "width": 1440,
+          "route": "/streams",
+          "viewport": 1440,
+          "document": 1440
+        },
+        {
+          "width": 1440,
+          "route": "/records",
+          "viewport": 1440,
+          "document": 1440
+        },
+        {
+          "width": 1440,
+          "route": "/stream/1",
+          "viewport": 1440,
+          "document": 1440
+        },
+        {
+          "width": 1440,
+          "route": "/stream/1/receipt/client",
+          "viewport": 1440,
+          "document": 1440
+        },
+        {
+          "width": 1440,
+          "route": "/stream/1/receipt/freelancer",
+          "viewport": 1440,
+          "document": 1440
+        }
+      ]
+    },
+    {
+      "name": "first-screen",
+      "mainAction": {
+        "x": 76.328125,
+        "y": 74,
+        "width": 112,
+        "height": 36.328125
+      }
+    },
+    {
+      "name": "loaded-assets",
+      "assets": [
+        {
+          "url": "./fonts/PressStart2P-400.woff2",
+          "sameOrigin": true
+        },
+        {
+          "url": "./fonts/Alef-400-FeVfS0NQpLYgnjVRCrNy1bQ.woff2",
+          "sameOrigin": true
+        },
+        {
+          "url": "./assets/index-qzWPrTG1.js",
+          "sameOrigin": true
+        },
+        {
+          "url": "./assets/index-YTgPKy3v.css",
+          "sameOrigin": true
+        },
+        {
+          "url": "./fonts/AtkinsonHyperlegible-700.woff2",
+          "sameOrigin": true
+        },
+        {
+          "url": "./fonts/Jersey-25-400-ll8-K2eeXj2tAs6F9BX4IIoNvAwShQ.woff2",
+          "sameOrigin": true
+        },
+        {
+          "url": "./fonts/Alef-700-FeVQS0NQpLYglo50H55Q2J5hm24.woff2",
+          "sameOrigin": true
+        },
+        {
+          "url": "./assets/dist-CAU-0hSY.js",
+          "sameOrigin": true
+        },
+        {
+          "url": "./fonts/AtkinsonHyperlegible-400.woff2",
+          "sameOrigin": true
+        }
+      ],
+      "fonts": [
+        {
+          "family": "Press Start 2P",
+          "weight": "400"
+        },
+        {
+          "family": "Atkinson Hyperlegible",
+          "weight": "400"
+        },
+        {
+          "family": "Atkinson Hyperlegible",
+          "weight": "700"
+        },
+        {
+          "family": "Jersey 25",
+          "weight": "400"
+        },
+        {
+          "family": "Alef",
+          "weight": "400"
+        },
+        {
+          "family": "Alef",
+          "weight": "700"
+        }
+      ]
+    },
+    {
+      "name": "320px-known-limitation",
+      "dimensions": {
+        "viewport": 320,
+        "document": 353
+      }
+    },
+    {
+      "name": "WebKit unavailable",
+      "reason": "Launch failed: required WebKit host shared libraries unavailable. Safari behavior was not verified."
+    }
+  ]
+}

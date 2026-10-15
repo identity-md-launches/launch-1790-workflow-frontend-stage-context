@@ -40,7 +40,7 @@ function History({ id }: { id: bigint }) {
       ) ?? [];
   return (
     <section className="history">
-      <h2>Stream activity</h2>
+      <h2>History</h2>
       <QueryState query={q} />
       {events.length === 0 && !q.isPending && (
         <p className="muted">No events in the scanned blocks.</p>
@@ -147,11 +147,11 @@ function StreamActions({
           {!gate.ready && <Notice>{gate.reason}</Notice>}
           {access.client && (
             <section className="controls-section">
-              <h2>Client controls</h2>
+              <h2>You are the client</h2>
               <div className="controls-grid">
                 {access.deposit && (
                   <section>
-                    <h3>Add funds</h3>
+                    <h3>Add money</h3>
                     <Field label={`Deposit (${token.symbol})`}>
                       <input
                         inputMode="decimal"
@@ -179,9 +179,9 @@ function StreamActions({
                 )}
                 {(access.pause || access.restart) && (
                   <section>
-                    <h3>Set the pace</h3>
+                    <h3>Pause or change the pace</h3>
                     {access.pause && (
-                      <Action name="pause" args={[id]} label="Pause stream" />
+                      <Action name="pause" args={[id]} label="Pause" />
                     )}
                     <Field
                       label={`New rate per second (${token.symbol})`}
@@ -208,7 +208,7 @@ function StreamActions({
                 )}
                 {access.refund && (
                   <section>
-                    <h3>Refund unearned funds</h3>
+                    <h3>Take back what has not streamed</h3>
                     <p>
                       {units(refundable, token.decimals)} {token.symbol}{" "}
                       refundable now.
@@ -240,7 +240,7 @@ function StreamActions({
                 )}
                 {access.void && (
                   <section>
-                    <h3>Close this stream</h3>
+                    <h3>Stop the stream</h3>
                     <p>
                       Voiding ends the stream and refunds unearned funds. The
                       recipient keeps what has streamed.
@@ -248,7 +248,7 @@ function StreamActions({
                     <Action
                       name="void"
                       args={[id]}
-                      label="Void stream"
+                      label="Stop and take back the rest"
                       danger
                       confirm="This permanently closes the stream. Unearned funds go to the client; the recipient can still withdraw earned funds."
                     />
@@ -265,10 +265,10 @@ function StreamActions({
           )}
           {access.recipient && (
             <section className="controls-section">
-              <h2>Recipient controls</h2>
+              <h2>You are the recipient</h2>
               <div className="controls-grid">
                 <section>
-                  <h3>Withdraw streamed funds</h3>
+                  <h3>Withdraw what has streamed</h3>
                   <p>
                     {units(withdrawable, token.decimals)} {token.symbol}{" "}
                     available now.
@@ -324,7 +324,7 @@ function StreamActions({
           )}
           {claimable.data !== undefined && claimable.data > 0n && (
             <section className="notice">
-              <h2>Deferred payout</h2>
+              <h2>A payment is waiting for you</h2>
               <p>
                 The token previously refused a settlement payout. You can claim{" "}
                 {units(claimable.data, token.decimals)} {token.symbol} when it
@@ -400,76 +400,84 @@ export function StreamPage({ id }: { id: bigint }) {
       </div>
       <dl className="stream-metrics">
         <div>
-          <dt>Streamed</dt>
+          <dt>Streamed so far</dt>
           <dd>
             {units(streamed, t.decimals)} <span>{t.symbol}</span>
           </dd>
         </div>
         <div>
-          <dt>Withdrawable</dt>
+          <dt>Ready to withdraw</dt>
           <dd>
             {units(withdrawable, t.decimals)} <span>{t.symbol}</span>
           </dd>
         </div>
         <div>
-          <dt>Refundable</dt>
+          <dt>Still the client’s</dt>
           <dd>
             {units(refundable, t.decimals)} <span>{t.symbol}</span>
           </dd>
         </div>
         <div>
-          <dt>Per second</dt>
+          <dt>Every second</dt>
           <dd>
             {units(s.rate, t.decimals)} <span>{t.symbol}</span>
           </dd>
         </div>
       </dl>
-      <p className="muted">
-        Live reads refresh every 5 seconds. Last read: block{" "}
-        {q.data.block.toString()}.{" "}
-        <button
-          className="text-button"
-          disabled={q.isFetching}
-          onClick={() => q.refetch()}
-        >
-          {q.isFetching ? "Refreshing…" : "Refresh state"}
+      <div className="live-read">
+        <p className="muted">
+          Live reads refresh every 5 seconds. Last read: block{" "}
+          {q.data.block.toString()}.
+        </p>
+        <button disabled={q.isFetching} onClick={() => q.refetch()}>
+          {q.isFetching ? "Refreshing…" : "Refresh now"}
         </button>
-      </p>
+      </div>
       <section className="terms-section">
         <div className="section-heading">
-          <h2>Terms of this stream</h2>
+          <h2>What was agreed</h2>
           <span>
-            {acceptedAt > 0n ? "Accepted by recipient" : "Not yet accepted"}
+            {acceptedAt > 0n ? "Accepted by the recipient" : "Not accepted yet"}
           </span>
         </div>
         <div className="row-links">
           {safeUri(s.termsURI) ? (
-            <External href={safeUri(s.termsURI)!}>Read agreed terms</External>
+            <External href={safeUri(s.termsURI)!}>Open the agreement</External>
           ) : (
-            <span className="hash">{s.termsURI}</span>
+            <p className="terms-text">{s.termsURI}</p>
           )}
           {s.imdJobId !== zeroHash && (
             <External href={LINKS.job(displayJob(s.imdJobId))}>
               View IMD job
             </External>
           )}
+          {(access.client || !access.recipient) && (
+            <a className="button" href={`#/stream/${id.toString()}/receipt/client`}>
+              Payment receipt
+            </a>
+          )}
+          {(access.recipient || !access.client) && (
+            <a className="button" href={`#/stream/${id.toString()}/receipt/freelancer`}>
+              Proof of contract
+            </a>
+          )}
           <span>
             Token: {t.symbol} · <AddressView value={s.token} />
           </span>
         </div>
         <details>
-          <summary>Terms hash and stream accounting</summary>
+          <summary>Details</summary>
           <dl className="detail-list">
             <div>
-              <dt>Terms hash</dt>
+              <dt>Fingerprint of the terms</dt>
               <dd className="hash">{s.termsHash}</dd>
             </div>
             <div>
-              <dt>Terms URI</dt>
+              <dt>Terms as stored</dt>
               <dd>{s.termsURI}</dd>
             </div>
             <div>
-              <dt>Credited balance</dt>
+              <dt>Put in so far</dt>
               <dd>
                 {units(s.balance, t.decimals)} {t.symbol}
               </dd>
@@ -481,7 +489,7 @@ export function StreamPage({ id }: { id: bigint }) {
               </dd>
             </div>
             <div>
-              <dt>Funds in custody</dt>
+              <dt>Still inside the stream</dt>
               <dd>
                 {units(s.balance - s.withdrawn, t.decimals)} {t.symbol}
               </dd>
@@ -504,7 +512,7 @@ export function StreamPage({ id }: { id: bigint }) {
         acceptedAt={acceptedAt}
       />
       <section className="dispute-section">
-        <h2>Dispute & settlement</h2>
+        <h2>Disagree?</h2>
         {s.state === 1 && (
           <>
             <p>
@@ -548,7 +556,7 @@ export function StreamPage({ id }: { id: bigint }) {
             <Action
               name="expireDispute"
               args={[id]}
-              label="Expire dispute"
+              label="Close the stale dispute"
               disabled={expiry === undefined || timestamp <= expiry}
               confirm="Release the dispute bond to its poster and clear this request without a verdict. The stream stays paused until the client restarts it. The oracle fee is already spent."
             />
@@ -566,7 +574,7 @@ export function StreamPage({ id }: { id: bigint }) {
             <Action
               name="enforce"
               args={[id]}
-              label="Enforce ruling"
+              label="Apply the decision"
               confirm={
                 s.ruling === 1
                   ? "Apply the accepted ruling, resume the saved rate and pay the bond to the recipient."
@@ -583,7 +591,7 @@ export function StreamPage({ id }: { id: bigint }) {
         )}
       </section>
       <section className="parties-records">
-        <h2>Both parties’ records</h2>
+        <h2>Track records</h2>
         <div className="two-columns">
           <RecordCard account={s.client} title="Client" />
           <RecordCard account={s.recipient} title="Recipient" />

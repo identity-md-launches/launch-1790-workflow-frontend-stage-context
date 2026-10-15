@@ -2,10 +2,11 @@ import { useState } from "react";
 import { useAccount } from "wagmi";
 import type { Address } from "viem";
 import { LINKS } from "./config";
-import { useBalance, useRead, useRuntime, useToken } from "./data";
+import { useBalance, useRead, useRuntime, useStream, useToken } from "./data";
 import { tryAmount, units } from "./domain";
 import { ApprovalAction } from "./actions";
 import { External, Field, QueryState } from "./ui";
+import { Town } from "./Town";
 
 export function Eligibility({ compact = false }: { compact?: boolean }) {
   const r = useRuntime();
@@ -17,10 +18,10 @@ export function Eligibility({ compact = false }: { compact?: boolean }) {
   return (
     <div className={`eligibility ${compact ? "compact" : ""}`}>
       <div>
-        <h2>{compact ? "Your access" : "Ready to start a stream?"}</h2>
+        <h2>{compact ? "Can you use Weir?" : "Ready to start a stream?"}</h2>
         {!address ? (
           <p className="muted">
-            Connect to check your WEIR balance and bond tier.
+            Connect your wallet to see whether you hold enough WEIR.
           </p>
         ) : (
           <>
@@ -34,17 +35,17 @@ export function Eligibility({ compact = false }: { compact?: boolean }) {
                 </strong>
               </div>
               <div>
-                <span>Eligibility</span>
+                <span>Access</span>
                 <strong>
                   {eligible.data === undefined
                     ? "Reading…"
                     : eligible.data
-                      ? "Eligible"
-                      : "More WEIR needed"}
+                      ? "Yes, you hold enough"
+                      : "Not yet: hold 10,000 WEIR"}
                 </strong>
               </div>
               <div>
-                <span>Dispute bond</span>
+                <span>Deposit if you dispute</span>
                 <strong>
                   {tier.data === undefined
                     ? "Reading…"
@@ -59,7 +60,7 @@ export function Eligibility({ compact = false }: { compact?: boolean }) {
       </div>
       {!compact && (
         <a href="#/create" className="button primary">
-          Create stream <span aria-hidden="true">↗</span>
+          Start a stream <span aria-hidden="true">↗</span>
         </a>
       )}
     </div>
@@ -78,32 +79,25 @@ export function Home() {
   const sponsorAmount = imdToken.data
     ? tryAmount(sponsor, imdToken.data.decimals)
     : undefined;
+  const platesOnly = new URLSearchParams(location.search).get("plates") === "1";
+  const first = useStream(1n);
+  const firstToken = useToken(first.data?.stream.token);
+  const figures =
+    first.data && firstToken.data && first.data.stream.state === 1
+      ? {
+          streamed: units(first.data.streamed, firstToken.data.decimals, 2),
+          symbol: firstToken.data.symbol,
+        }
+      : undefined;
   return (
     <>
-      <section className="intro">
-        <div>
-          <h1 tabIndex={-1}>Pay as the work flows.</h1>
-          <p>
-            Weir streams tokens for agreed work, second by second.
-            <br className="desktop-only" /> You set the terms; an IdentityMD
-            panel can settle disputes.
-            <br className="desktop-only" /> Weir takes no application fee.
-          </p>
-        </div>
-        <div className="flow-art" aria-hidden="true">
-          <svg viewBox="0 0 280 120">
-            <path d="M0 24h90q30 0 30 30v12q0 30 30 30h130M0 60h72q30 0 30 30v6q0 20 20 20h158M0 4h108q30 0 30 30v12q0 30 30 30h112" />
-            <circle cx="86" cy="24" r="5" />
-            <circle cx="166" cy="76" r="5" />
-            <circle cx="212" cy="96" r="5" />
-          </svg>
-        </div>
-      </section>
+      <Town route="/" platesOnly={platesOnly} figures={figures} />
+      <div className="page-inner">
       <Eligibility />
       <div className="home-grid">
         <section className="hold-section">
           <div className="section-heading">
-            <h2>Hold WEIR. Use Weir.</h2>
+            <h2>Hold WEIR to use Weir.</h2>
             <External href={LINKS.token(r.token.address)}>Buy WEIR</External>
           </div>
           <p>
@@ -114,15 +108,15 @@ export function Home() {
                 : "10,000"}{" "}
               WEIR
             </strong>{" "}
-            to create a stream or raise a dispute. Higher balances lower your
-            bond.
+            to start a stream or raise a dispute. There is no fee. The more you
+            hold, the smaller the deposit you put down when you dispute.
           </p>
           <table>
-            <caption>Dispute bond by WEIR balance</caption>
+            <caption>Dispute deposit by WEIR held</caption>
             <thead>
               <tr>
                 <th scope="col">WEIR held</th>
-                <th scope="col">Bond on stake</th>
+                <th scope="col">Deposit when you dispute</th>
               </tr>
             </thead>
             <tbody>
@@ -145,8 +139,8 @@ export function Home() {
             </tbody>
           </table>
           <small className="muted">
-            Stake is everything still held in the stream. The bond is paid in
-            the stream’s token.
+            A share of what is still inside the stream, paid in the stream’s
+            token. You get it back if the reviewers side with you.
           </small>
         </section>
         <section className="court-section">
@@ -161,8 +155,8 @@ export function Home() {
             <span>{imdToken.data?.symbol ?? "IMD"}</span>
           </p>
           <p>
-            Sponsorship pays oracle fees for everyone. When the fund is short,
-            the person raising the dispute pays.
+            Reviewers cost 0.5 IMD per dispute. When this fund holds enough, it
+            pays; when it is short, the person who disputes pays.
           </p>
           <QueryState query={fund} />
           <button
@@ -207,33 +201,33 @@ export function Home() {
         </section>
       </div>
       <section className="how-section">
-        <h2>Terms first. Payments follow.</h2>
+        <h2>Three stops.</h2>
         <div className="three-columns">
           <div>
-            <span className="step-number">01</span>
-            <h3>Agree on the work</h3>
+            <h3>No. 1 Agree</h3>
             <p>
-              Link your terms and keep their hash on-chain. The recipient can
-              accept them.
+              Write what is being delivered and by when. It is saved with the
+              stream, word for word, and the other side can accept it.
             </p>
           </div>
           <div>
-            <span className="step-number">02</span>
-            <h3>Fund a stream</h3>
+            <h3>No. 2 Fund</h3>
             <p>
-              Set a rate per second. The recipient withdraws what has streamed.
+              Put in a deposit and set an amount per day. Money moves every
+              second; they withdraw any time, you can pause or add more.
             </p>
           </div>
           <div>
-            <span className="step-number">03</span>
-            <h3>Resolve a disagreement</h3>
+            <h3>No. 3 Settle</h3>
             <p>
-              One question goes to five panel members, with four needed to
-              agree.
+              If you disagree, either side asks five independent reviewers. Four
+              must agree. Delivered: the stream resumes. Not delivered: what is
+              left comes back to you.
             </p>
           </div>
         </div>
       </section>
+      </div>
     </>
   );
 }
