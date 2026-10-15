@@ -2,9 +2,9 @@
 
 ## Overview
 
-This documents the source imported unchanged from SwarmStream/swarmstream commit `fc3ac859dfbcd4f5bb030c577b4dec6657e33303`. Weir. is a token-streaming interface for clients and freelancers on Robinhood Chain. Its home page is a pixel-art cutaway street: the client's house, reviewers, a doorway to creation, the freelancer's studio, and coins in a pipe. Transaction pages use readable forms and plain paper surfaces. The product spelling includes the period: **Weir.**
+This documents the source imported from SwarmStream/swarmstream commit `fc3ac859dfbcd4f5bb030c577b4dec6657e33303`, with the reviewed mobile wallet-layout corrections in `web/src/style.css`. Weir. is a token-streaming interface for clients and freelancers on Robinhood Chain. Its home page is a pixel-art cutaway street: the client's house, reviewers, a doorway to creation, the freelancer's studio, and coins in a pipe. Transaction pages use readable forms and plain paper surfaces. The product spelling includes the period: **Weir.**
 
-The implementation is authoritative. This document describes the actual CSS cascade, including existing rounded dialogs and notices; it does not propose a redesign. The imported source's `web/README.md` and the earlier `docs/DESIGN.md` contain historical descriptions. This root document describes the current design. Review evidence and exceptions are in [the import validation](docs/IMPORT_VALIDATION.md).
+The implementation is authoritative. This document describes the actual CSS cascade, including existing rounded dialogs and notices; it does not propose a redesign. The imported source's `web/README.md` and the earlier `docs/DESIGN.md` contain historical descriptions. This root document describes the current design. Review evidence and exceptions are in [the revision validation](docs/REVISION_VALIDATION.md) and [the original import validation](docs/IMPORT_VALIDATION.md).
 
 ## Colors
 
@@ -60,7 +60,9 @@ Shared spacing tokens are 4, 8, 12, 16, 24, 32, 48 and 64 px. Header, product pa
 
 At **640 px and below**, forms, major grids and amount/period rows become single-column layouts. Wallet dialogs become bottom sheets. At **560 px and below**, receipt facts become a single column and paper padding drops from 32 to 20 px. Receipt width is capped at 640 px. Print CSS hides navigation, footer and action controls, removes the paper border and allows full print width.
 
-The seven inspected routes have no page-level horizontal overflow at 360, 390, 640, 768, 900, 901 and 1440 px in Chromium. Home's internal street pan was exercised independently. At 320 px the approved mobile home header reaches 353 px; this inherited limitation is recorded without restyling the approved import.
+Wallet buttons use `white-space: normal` and `min-width: 0` at **640 px and below**, including the home `.mobile-topbar`; `.header-right` retains its existing `min-width: 0`. The full network-switch label wraps without shrinking its font or clipping text. At **900 px and below**, a header containing `.wallet-error` becomes a two-column grid. Its neutral `.header-right` wrapper uses `display: contents`, letting the existing alert span both columns in normal flow above navigation. The shared topbar retains its 100 px first row (80 px below 640 px); the home topbar retains its own padding and gap. Headers without errors keep their existing flex layout. These rules are in `web/src/style.css:1116` and `web/src/style.css:1184`; colors, copy, fonts and wallet logic are unchanged.
+
+The seven inspected routes have no page-level horizontal overflow at 360, 390, 640, 768, 900, 901 and 1440 px in Chromium. Wrong-network states also pass at 320, 360, 390, 640, 900 and 1440 px. The prior 320 px home-header overflow is resolved by the same wrapping rule; its navigation and street still pan inside their own frames. Home's internal street pan was exercised independently. WebKit remains unverified because its required host libraries are unavailable.
 
 ## Elevation & depth
 
@@ -86,7 +88,7 @@ Main buttons, token options, forms, receipt paper, scene signs and position indi
 | `web/src/Records.tsx` | `RecordCard` | Address lookup and five public counters |
 | `web/src/Receipt.tsx` | `Receipt` | Client payment receipt/freelancer proof, agreement and amounts, draft/ruling states, copy and print |
 
-Most buttons have at least 44 px height; wallet rows are at least 56 px. Global keyboard focus is a 2 px brick outline offset 4 px. The skip link targets the main landmark. `h1` and main programmatic focus intentionally suppress outlines. Validation, disabled, pending and error states are retained unchanged.
+Most buttons have at least 44 px height; wallet rows are at least 56 px. Global keyboard focus is a 2 px brick outline offset 4 px. The skip link targets the main landmark. `h1` and main programmatic focus intentionally suppress outlines. Validation, disabled, pending and error behavior is retained; the mobile wallet alert now occupies its own header row so it cannot block navigation.
 
 Coins animate in `steps(8, end)` over four seconds only under `prefers-reduced-motion: no-preference`. Other existing button transitions and pending spinners also live behind that preference. The reduced-motion check observed no ongoing coin animation.
 

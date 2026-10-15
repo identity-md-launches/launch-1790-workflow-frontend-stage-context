@@ -1,0 +1,18 @@
+{
+  "files": 254,
+  "workingTreeBytesBeforeSizeReport": 8217538,
+  "completeTreeBundleBytesBeforeSizeReport": 3969864,
+  "limitBytes": 8388608,
+  "belowLimit": true,
+  "completeBundleConservativeUpperBoundBytes": 4035400,
+  "allowanceBytes": 65536,
+  "measurementScope": "Self-contained snapshot of all candidate files, including unchanged contracts, lib, source, static export, revision documentation and .imd-responses.json; excludes removable test/scratch and supplied reads, and prior Git history.",
+  "temporaryBundleGitVerify": "passed",
+  "noDependencyOrCacheDirectories": true,
+  "noDependencyArchives": true,
+  "noSubmodules": true,
+  "ignoreFilesChanged": false,
+  "protectedBuildConfigurationChanged": false,
+  "includesRequiredResponses": true,
+  "originalRepositoryGitMetadataModified": false
+}

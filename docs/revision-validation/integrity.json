@@ -1,0 +1,32 @@
+{
+  "approvedCommit": "fc3ac859dfbcd4f5bb030c577b4dec6657e33303",
+  "approvedFiles": 118,
+  "unchangedFiles": 116,
+  "changedFiles": [
+    {
+      "path": "web/src/style.css",
+      "approvedSha256": "3ed98562d9ee7877a8e6a4fa6c6fcec844f85380b897a4c249269eea909e0d4e",
+      "deliveredSha256": "d6681a76acd8c81100a53b860dcc5ced6dd21a13375d7778a4620319fb36f7fd"
+    },
+    {
+      "path": "dist/assets/index-YTgPKy3v.css",
+      "approvedSha256": "4e13b0b5f858e094e00a2ddf2508d931557b538c72f5bf68f9c91ff0195c9d9d",
+      "deliveredSha256": "d1abad81cda1acb41adaf17728d65fe3c282723aaf071a33ec05c88faaa836b5"
+    }
+  ],
+  "productionStylesheet": "assets/index-tTyK7sP7.css",
+  "productionCssByteIdentical": true,
+  "manifestInventoryMismatches": [
+    {
+      "path": "assets/index-YTgPKy3v.css",
+      "manifestSha256": "4e13b0b5f858e094e00a2ddf2508d931557b538c72f5bf68f9c91ff0195c9d9d",
+      "deliveredSha256": "d1abad81cda1acb41adaf17728d65fe3c282723aaf071a33ec05c88faaa836b5"
+    }
+  ],
+  "allOtherManifestAssetsVerified": true,
+  "manifestAndAbisByteIdentical": true,
+  "platesByteIdentical": true,
+  "applicationJavaScriptByteIdentical": true,
+  "protectedBuildConfigurationChanged": false,
+  "ignoreFilesChanged": false
+}

@@ -1,0 +1,58 @@
+
+> weir-web@1.0.0 build
+> node scripts/export.mjs prepare && vite build && node scripts/export.mjs finalize
+
+Pinned source ABIs verified; deployment inputs prepared.
+vite v8.3.4 building client environment for production...
+transforming...
+
+./fonts/PressStart2P-400.woff2 referenced in ./fonts/PressStart2P-400.woff2 didn't resolve at build time, it will remain unchanged to be resolved at runtime
+
+./fonts/AtkinsonHyperlegible-700.woff2 referenced in ./fonts/AtkinsonHyperlegible-700.woff2 didn't resolve at build time, it will remain unchanged to be resolved at runtime
+
+./fonts/PixelifySans-var-CHylV-3HFUT7aC4iv1TxGDR9Jn0Ei0tSaJ0.woff2 referenced in ./fonts/PixelifySans-var-CHylV-3HFUT7aC4iv1TxGDR9Jn0Ei0tSaJ0.woff2 didn't resolve at build time, it will remain unchanged to be resolved at runtime
+
+./fonts/PixelifySans-var-CHylV-3HFUT7aC4iv1TxGDR9JnMEi0tSaJ1f2A.woff2 referenced in ./fonts/PixelifySans-var-CHylV-3HFUT7aC4iv1TxGDR9JnMEi0tSaJ1f2A.woff2 didn't resolve at build time, it will remain unchanged to be resolved at runtime
+
+./fonts/Silkscreen-700-m8JUjfVPf62XiF7kO-i9aAhAfmyi2PmeBvY.woff2 referenced in ./fonts/Silkscreen-700-m8JUjfVPf62XiF7kO-i9aAhAfmyi2PmeBvY.woff2 didn't resolve at build time, it will remain unchanged to be resolved at runtime
+
+./fonts/Silkscreen-700-m8JUjfVPf62XiF7kO-i9aAhAfmKi2PmeBvYdbA.woff2 referenced in ./fonts/Silkscreen-700-m8JUjfVPf62XiF7kO-i9aAhAfmKi2PmeBvYdbA.woff2 didn't resolve at build time, it will remain unchanged to be resolved at runtime
+
+./fonts/Silkscreen-400-m8JXjfVPf62XiF7kO-i9YLNla0GA1dM.woff2 referenced in ./fonts/Silkscreen-400-m8JXjfVPf62XiF7kO-i9YLNla0GA1dM.woff2 didn't resolve at build time, it will remain unchanged to be resolved at runtime
+
+./fonts/Jersey-25-400-ll8-K2eeXj2tAs6F9BX4IIoNvAwShQ.woff2 referenced in ./fonts/Jersey-25-400-ll8-K2eeXj2tAs6F9BX4IIoNvAwShQ.woff2 didn't resolve at build time, it will remain unchanged to be resolved at runtime
+
+./fonts/Jersey-25-400-ll8-K2eeXj2tAs6F9BX4LooNvAwShS1i.woff2 referenced in ./fonts/Jersey-25-400-ll8-K2eeXj2tAs6F9BX4LooNvAwShS1i.woff2 didn't resolve at build time, it will remain unchanged to be resolved at runtime
+
+./fonts/Alef-400-FeVfS0NQpLYgnjVRCrNy1bQ.woff2 referenced in ./fonts/Alef-400-FeVfS0NQpLYgnjVRCrNy1bQ.woff2 didn't resolve at build time, it will remain unchanged to be resolved at runtime
+
+./fonts/Alef-700-FeVQS0NQpLYglo50H55Q2J5hm24.woff2 referenced in ./fonts/Alef-700-FeVQS0NQpLYglo50H55Q2J5hm24.woff2 didn't resolve at build time, it will remain unchanged to be resolved at runtime
+
+./fonts/AtkinsonHyperlegible-400.woff2 referenced in ./fonts/AtkinsonHyperlegible-400.woff2 didn't resolve at build time, it will remain unchanged to be resolved at runtime
+✓ 799 modules transformed.
+rendering chunks...
+computing gzip size...
+../dist/index.html                   4.23 kB │ gzip:   1.18 kB
+../dist/third-party-licenses.txt    35.87 kB │ gzip:   5.55 kB
+../dist/assets/index-tTyK7sP7.css   36.06 kB │ gzip:   8.21 kB
+../dist/assets/ccip-3cmVI4Dp.js      2.83 kB │ gzip:   1.31 kB
+../dist/assets/dist-Bgyrp66F.js     96.21 kB │ gzip:  31.08 kB
+../dist/assets/index-eVt5jN8c.js   661.61 kB │ gzip: 198.43 kB
+
+✓ built in 1.03s
+{
+  "verified": true,
+  "sourceCommit": "a01e3ae534fbe2789742d5512ded7a99b2c83f85",
+  "assets": 41,
+  "exportBytes": 3192501,
+  "abiHashes": [
+    {
+      "name": "LaunchToken",
+      "abiHash": "38880b8e56d42ce900f744a7908c7139632a49f1c3f33385c64ceaed29d37bee"
+    },
+    {
+      "name": "Weir",
+      "abiHash": "9f830efe0ba948e6b888f29f31001907762f52126d556555cc855e6ec3e8cbcd"
+    }
+  ]
+}

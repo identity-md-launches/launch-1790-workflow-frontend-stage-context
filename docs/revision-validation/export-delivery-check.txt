@@ -1,0 +1,13 @@
+
+> weir-web@1.0.0 check:export
+> node scripts/export.mjs check
+
+file://<validation-checkout>/web/scripts/export.mjs:33
+  if (!ok) throw new Error(message);
+                 ^
+
+Error: Manifest differs from handoff or asset inventory
+    at assert (file://<validation-checkout>/web/scripts/export.mjs:33:18)
+    at file://<validation-checkout>/web/scripts/export.mjs:135:3
+
+Node.js v24.21.0

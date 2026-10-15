@@ -1,8 +1,8 @@
-# Weir. website — approved import
+# Weir. website — approved design
 
-The website source in `web/` and static export in `dist/` are copied **byte-for-byte** from [SwarmStream/swarmstream at `fc3ac859dfbcd4f5bb030c577b4dec6657e33303`](https://github.com/SwarmStream/swarmstream/tree/fc3ac859dfbcd4f5bb030c577b4dec6657e33303). This is the approved Weir. design, including the client and freelancer receipt pages. No application design, wording, artwork, wallet flow or contract call was changed during this import.
+The website source in `web/` and static export in `dist/` were imported **byte-for-byte** from [SwarmStream/swarmstream at `fc3ac859dfbcd4f5bb030c577b4dec6657e33303`](https://github.com/SwarmStream/swarmstream/tree/fc3ac859dfbcd4f5bb030c577b4dec6657e33303). The subsequent review revision changes only `web/src/style.css` and its compiled stylesheet: narrow wallet labels wrap, and mobile wallet errors reserve a row above navigation. The approved Weir. design, copy, plates, application JavaScript, wallet flows, contract calls, manifest and ABIs remain unchanged. Both receipt pages are included.
 
-**Publication target:** existing IMD label `weir`, https://weir.sites.imd.fun, under `weir.site.identitymd.eth`. The deliverable for the IMD publisher is the repository-root **`dist/`**, not `web/` or a freshly generated substitute. This worker prepared and validated those files; post-submission pinning, site-label replacement and public availability are performed by the IMD publication pipeline. No new CID or completed public deployment is claimed here.
+**Publication target:** existing IMD label `weir`, https://weir.sites.imd.fun, under `weir.site.identitymd.eth`. The deliverable for the IMD publisher is the repository-root **`dist/`**, including the corrected stylesheet. This worker prepared and validated those files; post-submission pinning, site-label replacement and public availability are performed by the IMD publication pipeline. No new CID or completed public deployment is claimed here.
 
 ## Install, preview and rebuild
 
@@ -30,9 +30,35 @@ npm run check:export
 npm run preview
 ```
 
-The build writes `../dist/` and refreshes generated public staging files. For this approved-import delivery, retain the pinned export and compare every rebuilt byte before considering replacement. The build reads `docs/abi/` from the deployed source commit when available, otherwise from the working tree, and checks canonical ABI hashes against the handoff. Keep the root `docs/abi/` directory with the checkout. No key, relay account or WalletConnect project ID is needed. Do not commit installed modules, caches or dependency archives.
+The build writes `../dist/` and refreshes generated public staging files. The build reads `docs/abi/` from the deployed source commit when available, otherwise from the working tree, and checks canonical ABI hashes against the handoff. Keep the root `docs/abi/` directory with the checkout. No key, relay account or WalletConnect project ID is needed. Do not commit installed modules, caches or dependency archives.
 
-## Actual validation for this import
+For this revision, build in a disposable checkout, then run this from the delivery repository root:
+
+```sh
+node docs/revision-validation/export-css.mjs /path/to/disposable-checkout/dist
+```
+
+The helper checks that application JavaScript differs only in generated filenames and that all other runtime assets and deployment settings match. It copies only the compiled CSS into the approved stylesheet path, preserving all other export bytes. **The required immutable `dist/imd-deployment.json` still lists the original CSS digest.** Accordingly, `npm run check:export` passes on the fresh build but reports an asset-inventory mismatch on this delivered export. This is documented, not a passing check; no deployment or ABI bytes were changed to conceal it. [Revision evidence](docs/REVISION_VALIDATION.md) identifies the single inventory discrepancy.
+
+## Actual validation for the wallet-layout revision
+
+- Reproduced both reports before editing: at 360 px, wrong-network pages measured 434 px (home) and 385 px (other routes); dismissed connection errors intercepted Records clicks at 360 and 390 px.
+- Production build, TypeScript check and all 11 domain tests passed. The rebuilt stylesheet is byte-identical to the delivered CSS. All other 41 export files and 75 other source files match the approved import.
+- All **16 wallet-layout scenarios** and **12 existing interaction scenarios** passed in Chromium. All seven routes stay within the viewport in the wrong-network state at 320, 360, 390, 640, 900 and 1440 px. Error messages reserve space above navigation through 900 px; Records clicks and network-switch retries work. Transactions in the broader harness use mocks only.
+- The pinned probe passed **12/16** checks, including layout at 320, 390 and 1440 px. The remaining casing, tracking, type-size and font-family flags belong to the approved design. The 390 px first screen shows Weir. and Start a stream. No external script, stylesheet, font or image loads were observed in the interaction checks.
+- WebKit 27.2 could not launch because its system libraries are unavailable. Real wallet signing, physical devices, native zoom and screen readers remain unverified. Publication is performed after submission by IMD.
+
+Run the regression after installing the existing dependencies and Chromium (from the repository root):
+
+```sh
+node docs/revision-validation/wallet-layout.mjs
+node docs/import-validation/interaction-check.mjs
+sha256sum --check docs/revision-validation/delivered-files.sha256
+```
+
+Both harnesses accept `WEIR_CHECK_WEB` pointing to a temporary `web/` checkout with dependencies and `PLAYWRIGHT_BROWSERS_PATH` for temporary browser downloads. They serve the actual repository `dist/` under a subpath and write screenshots/results only under `test/scratch/`. See [the revision report](docs/REVISION_VALIDATION.md) and [.imd-responses.json](.imd-responses.json).
+
+## Original import validation (historical)
 
 - Production build and TypeScript check passed. The rebuild reproduced **all 42 export files exactly**, including the deployment manifest and ABIs. Vite emitted font-resolution warnings, but the preserved relative font URLs loaded successfully in the browser.
 - All **11 domain tests** passed. The current-interface browser harness passed **12 scenarios**, including all seven routes across 360–1440 px, mobile street panning, wallet switching/rejection, simulated exact-amount approval and creation, records, receipt copying/printing, and reduced motion. No transaction was broadcast.
@@ -47,12 +73,12 @@ cd web
 npx playwright install chromium
 cd ..
 node docs/import-validation/interaction-check.mjs
-sha256sum --check docs/import-validation/approved-files.sha256
+sha256sum --check docs/revision-validation/delivered-files.sha256
 ```
 
 The harness starts and stops its own subpath preview, uses only mock wallets/RPC for transaction tests, and writes disposable evidence under `test/scratch/import-validation/`. `WEIR_CHECK_WEB` can point to an identical temporary `web/` checkout containing dependencies; `PLAYWRIGHT_BROWSERS_PATH` can point to a temporary browser installation. WebKit is attempted when available and reported as unverified otherwise.
 
-See [DESIGN.md](DESIGN.md), [the full validation report](docs/IMPORT_VALIDATION.md), [byte-integrity evidence](docs/import-validation/integrity.json), and [submission size evidence](docs/import-validation/submission-size.json). Older documents under `docs/` and the imported `web/README.md` describe earlier stages; their validation results do not certify this export. The contract documentation below is retained as historical implementation documentation. This import adds no audit claim beyond the swarm's panel and deploys no contract.
+See [DESIGN.md](DESIGN.md), [the current revision report](docs/REVISION_VALIDATION.md), and [the original import report](docs/IMPORT_VALIDATION.md). Original byte-integrity and size evidence under `docs/import-validation/` describes the pre-revision snapshot; `approved-files.sha256` now intentionally differs on exactly the source stylesheet and its compiled export. Older documents and the imported `web/README.md` describe earlier stages; their validation results do not certify this export. The contract documentation below is retained as historical implementation documentation. This work adds no audit claim beyond the swarm's panel and deploys no contract.
 
 ---
 

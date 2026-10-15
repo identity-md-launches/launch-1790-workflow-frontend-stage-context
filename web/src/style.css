@@ -1113,6 +1113,33 @@ dd {
   .network-label {
     display: none;
   }
+  /* Wallet failures reserve a row above navigation instead of covering it. */
+  .topbar:has(.wallet-error),
+  .mobile-topbar:has(.wallet-error) {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+  .topbar:has(.wallet-error) {
+    grid-template-rows: minmax(100px, auto) auto;
+    row-gap: 0;
+  }
+  .topbar:has(.wallet-error) .header-right {
+    display: contents;
+  }
+  .topbar:has(.wallet-error) .wallet-button,
+  .mobile-topbar:has(.wallet-error) .wallet-button {
+    justify-self: end;
+    max-width: 100%;
+  }
+  .wallet-error {
+    position: static;
+    inset: auto;
+    grid-column: 1 / -1;
+    width: auto;
+    max-width: none;
+    margin: 0;
+    z-index: auto;
+  }
   .stream-metrics {
     grid-template-columns: 1fr 1fr;
   }
@@ -1136,6 +1163,9 @@ dd {
     min-height: 80px;
     gap: 16px;
   }
+  .topbar:has(.wallet-error) {
+    grid-template-rows: minmax(80px, auto) auto;
+  }
   .brand {
     font-size: var(--text-large);
   }
@@ -1150,6 +1180,11 @@ dd {
   .wallet-button {
     font-size: var(--text-small);
     padding: 10px 12px;
+  }
+  .wallet-button,
+  .mobile-topbar .wallet-button {
+    white-space: normal;
+    min-width: 0;
   }
   nav {
     gap: 0;
